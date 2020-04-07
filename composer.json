@@ -1,0 +1,21 @@
+{
+  "name": "petenelson/wp-tesla",
+  "description": "WP Tesla",
+  "authors": [
+    {
+      "name": "Pete Nelson",
+      "email": "pete@petenelson.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.2",
+    "10up/phpcs-composer": "dev-master"
+  },
+  "scripts": {
+    "lint": "phpcs .",
+    "lint-fix": "phpcbf ."
+  }
+}
