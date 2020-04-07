@@ -23,10 +23,14 @@ define( 'WP_TESLA_INC', WP_TESLA_PATH . 'includes/' );
 require_once WP_TESLA_INC . 'functions/core.php';
 require_once WP_TESLA_INC . 'functions/api.php';
 require_once WP_TESLA_INC . 'functions/rest.php';
+require_once WP_TESLA_INC . 'functions/user.php';
+require_once WP_TESLA_INC . 'post-types/tesla.php';
 
 // Activation/Deactivation.
-register_activation_hook( __FILE__, '\PeteNelson\WPTesla\Core\activate' );
-register_deactivation_hook( __FILE__, '\PeteNelson\WPTesla\Core\deactivate' );
+register_activation_hook( __FILE__, '\WPTesla\Core\activate' );
+register_deactivation_hook( __FILE__, '\WPTesla\Core\deactivate' );
 
 // Bootstrap.
-\PeteNelson\WPTesla\Core\setup();
+\WPTesla\Core\setup();
+\WPTesla\User\setup();
+\WPTesla\PostTypes\Tesla\setup();

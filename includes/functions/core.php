@@ -5,7 +5,7 @@
  * @package WP Tesla
  */
 
-namespace PeteNelson\WPTesla\Core;
+namespace WPTesla\Core;
 
 /**
  * Default setup routine
@@ -18,7 +18,6 @@ function setup() {
 	};
 
 	add_action( 'init', $n( 'i18n' ) );
-	add_action( 'admin_init', $n( 'init' ) );
 	add_action( 'wp_enqueue_scripts', $n( 'scripts' ) );
 	add_action( 'wp_enqueue_scripts', $n( 'styles' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_scripts' ) );

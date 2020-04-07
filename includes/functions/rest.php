@@ -5,4 +5,4 @@
  * @package WP Tesla
  */
 
-namespace PeteNelson\WPTesla\REST;
+namespace WPTesla\REST;
