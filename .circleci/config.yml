@@ -25,4 +25,5 @@ workflows:
             branches:
               only:
                 - master
+                - develop
                 - feature/circleci-deployment
