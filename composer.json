@@ -1,5 +1,6 @@
 {
   "name": "petenelson/wp-tesla",
+  "type": "wordpress-plugin",
   "description": "WP Tesla",
   "authors": [
     {
