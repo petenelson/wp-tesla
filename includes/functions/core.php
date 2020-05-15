@@ -18,6 +18,7 @@ function setup() {
 	};
 
 	add_action( 'init', $n( 'i18n' ) );
+	add_action( 'init', $n( 'register_scripts_styles' ) );
 	add_action( 'wp_enqueue_scripts', $n( 'scripts' ) );
 	add_action( 'wp_enqueue_scripts', $n( 'styles' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_scripts' ) );
@@ -33,6 +34,36 @@ function i18n() {
 	$locale = apply_filters( 'plugin_locale', get_locale(), 'wp-tesla' );
 	load_textdomain( 'wp-tesla', WP_LANG_DIR . '/wp-tesla/wp-tesla-' . $locale . '.mo' );
 	load_plugin_textdomain( 'wp-tesla', false, plugin_basename( WP_TESLA_PATH ) . '/lang/' );
+}
+
+/**
+ * Register scripts and styles.
+ *
+ * @return void
+ */
+function register_scripts_styles() {
+	wp_register_script(
+		'wp-tesla-admin',
+		WP_TESLA_URL . '/dist/js/admin.js',
+		[],
+		WP_TESLA_VERSION,
+		true
+	);
+
+	wp_register_script(
+		'wp-tesla',
+		WP_TESLA_URL . '/dist/js/frontend.js',
+		[],
+		WP_TESLA_VERSION,
+		true
+	);
+
+	wp_register_style(
+		'wp-tesla-admin',
+		WP_TESLA_URL . '/dist/css/admin-style.css',
+		[],
+		WP_TESLA_VERSION
+	);
 }
 
 /**
@@ -70,7 +101,7 @@ function scripts() {
  * @return void
  */
 function admin_scripts() {
-
+	wp_enqueue_script( 'wp-tesla-admin' );
 }
 
 /**
@@ -88,5 +119,5 @@ function styles() {
  * @return void
  */
 function admin_styles() {
-
+	wp_enqueue_style( 'wp-tesla-admin' );
 }
