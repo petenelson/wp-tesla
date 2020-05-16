@@ -36,7 +36,7 @@ jobs:
           name: Deploy
           command: ./bin/deploy.sh
       - save_cache:
-          keys:
+          key:
             - wp-tesla-{{ .Branch }}-{{ checksum "package-lock.json" }}-{{ checksum "composer.lock" }}
           paths:
             - node_modules
