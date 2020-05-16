@@ -21,6 +21,7 @@ function setup() {
 	add_action( 'init', $n( 'register_scripts_styles' ) );
 	add_action( 'wp_enqueue_scripts', $n( 'scripts' ) );
 	add_action( 'wp_enqueue_scripts', $n( 'styles' ) );
+	add_action( 'admin_enqueue_scripts', $n( 'localize_admin_data' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_scripts' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_styles' ) );
 }
@@ -92,7 +93,7 @@ function deactivate() {
  * @return void
  */
 function scripts() {
-
+	wp_enqueue_script( 'jquery' );
 }
 
 /**
@@ -120,4 +121,22 @@ function styles() {
  */
 function admin_styles() {
 	wp_enqueue_style( 'wp-tesla-admin' );
+}
+
+/**
+ * Localize data for the admin Javascript
+ *
+ * @return void
+ */
+function localize_admin_data() {
+
+	// From https://www.teslaapi.io/authentication/oauth.
+	$data = [
+		'endpoints' => [
+			'auth'         => '/wp-tesla/v1/authenticate',
+			'listVehicles' => '/wp-tesla/v1/vehicles',
+		],
+	];
+
+	wp_localize_script( 'wp-tesla-admin', 'wpTeslaAdmin', apply_filters( 'wp_tesla_localize_admin_data', $data ) );
 }

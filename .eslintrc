@@ -27,6 +27,8 @@
     "space-in-parens": [ 2, "always" ],
     "no-console": [ 1 ],
     "no-alert": [ 1 ],
+    "no-unused-vars": [ "warn" ],
+    "require-jsdoc": [ "warn" ],
 		"camelcase": [ 2 ],
 		"react-hooks/rules-of-hooks": "error",
 		"react/prop-types": [1]

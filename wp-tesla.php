@@ -3,7 +3,7 @@
 Plugin Name: WP Tesla
 Description: Display your Tesla's information and status on your site.
 Plugin URI: https://github.com/petenelson/wp-tesla
-Version: 0.1.0
+Version: 0.1.1
 Author: Pete Nelson (@CodeGeekATX)
 Text Domain: wp-tesla
 Domain Path: /lang
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Useful global constants.
-define( 'WP_TESLA_VERSION', '0.1.0' );
+define( 'WP_TESLA_VERSION', '0.1.1' );
 define( 'WP_TESLA_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
 define( 'WP_TESLA_PATH', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'WP_TESLA_INC', WP_TESLA_PATH . 'includes/' );
