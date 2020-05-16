@@ -55,7 +55,6 @@
 		"@wordpress/element": "^2.10.0",
 		"babel-eslint": "^10.0.3",
 		"babel-loader": "^8.0.6",
-		"backstopjs": "^4.4",
 		"body-scroll-lock": "^3.0.2",
 		"browser-sync": "^2.26.7",
 		"browser-sync-webpack-plugin": "^2.2.2",

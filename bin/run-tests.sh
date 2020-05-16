@@ -12,7 +12,7 @@ cat /tmp/wordpress/wp-tests-config.php
 
 # Verify mysql
 sudo apt update
-sudo apt install -y default-mysql-client
+sudo apt install -y default-mysql-client libmysqlclient-dev php7.0-mysql
 mysql -e 'show databases;' -h 127.0.0.1 -uroot --password=""
 
 ./vendor/bin/phpunit --verbose
