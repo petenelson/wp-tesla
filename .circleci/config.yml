@@ -8,7 +8,7 @@ jobs:
         environment:
           MYSQL_USER: root
           MYSQL_PASSWORD: password
-      - image: mysql:5.7
+      - image: circleci/mysql:5.7.30
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
         environment:
           MYSQL_USER: root
