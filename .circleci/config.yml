@@ -22,11 +22,11 @@ jobs:
           fingerprints:
             - "f3:0b:d0:fa:3c:cc:95:b8:c7:59:c9:ac:39:52:85:48"
       - run:
-          name: Build
-          command: ./bin/build.sh
-      - run:
           name: Install Tests
           command: ./bin/install-tests.sh
+      - run:
+          name: Build
+          command: ./bin/build.sh
       - run:
           name: Run Tests
           command: ./bin/run-tests.sh
