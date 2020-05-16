@@ -17,9 +17,9 @@ jobs:
 
     steps:
       - checkout
-      - restore_cache
-        keys:
-          - wp-tesla-{{ .Branch }}-{{ checksum "package-lock.json" }}-{{ checksum "composer.lock" }}
+      - restore_cache:
+          keys:
+            - wp-tesla-{{ .Branch }}-{{ checksum "package-lock.json" }}-{{ checksum "composer.lock" }}
       - add_ssh_keys:
           fingerprints:
             - "f3:0b:d0:fa:3c:cc:95:b8:c7:59:c9:ac:39:52:85:48"
