@@ -7,6 +7,8 @@
 
 namespace WPTesla\REST;
 
+use \WPTesla\User;
+
 /**
  * WordPress hooks and filters.
  *
@@ -49,11 +51,11 @@ function add_rest_endpoints() {
 
 	register_rest_route(
 		'wp-tesla/v1',
-		'/vehicles',
+		'/logout',
 		[
-			'methods'  => [ 'GET' ],
-			'callback' => __NAMESPACE__ . '\handle_list_vehicles',
-			'permission_callback' => 'is_user_logged_in',
+			'methods'  => [ 'POST' ],
+			'callback' => __NAMESPACE__ . '\handle_logout',
+			'permission_callback' => __NAMESPACE__ . '\user_can_authenticate',
 		]
 	);
 }
@@ -64,8 +66,10 @@ function add_rest_endpoints() {
  * @return bool
  */
 function user_can_authenticate() {
+	// TODO change this to a cap check.
 	return apply_filters( __FUNCTION__, is_user_logged_in() );
 }
+
 
 /**
  * Performs authentication against the Tesla API.
@@ -85,11 +89,15 @@ function handle_authenticate( $request ) {
 }
 
 /**
- * Gets a list of vehicles from the API.
+ * Handles logging out the user.
  *
  * @return WP_REST_Response
  */
-function handle_list_vehicles() {
-	$response = \WPTesla\API\list_vehicles();
+function handle_logout() {
+
+	User\logout();
+
+	$response['logged_out'] = true;
+
 	return rest_ensure_response( $response );
 }

@@ -7,6 +7,8 @@
 
 namespace WPTesla\API;
 
+use \WPTesla\Helpers;
+
 /**
  * Send a request to the API. This is a wrapper for GET/POST/DELETE API requests.
  *
@@ -18,8 +20,11 @@ namespace WPTesla\API;
  */
 function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 
-	$caching_enabled = apply_filters( __FUNCTION__ . '_caching_enabled', true );
-	$max_retries     = apply_filters( __FUNCTION__ . '_max_retries', 3 );
+	// The main filter name used for the return value.
+	$filter_name = 'wp_tesla_api_request';
+
+	$caching_enabled = apply_filters( 'wp_tesla_api_caching_enabled', true );
+	$max_retries     = apply_filters( 'wp_tesla_api_max_retries', 3 );
 	$retries         = 0;
 
 	$response = null;
@@ -68,6 +73,9 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 		}
 	}
 
+	// One last change to filter this before the API request.
+	$request_args = apply_filters( "{$filter_name}_args", $request_args, $endpoint, $endpoint, $method, $params, $args );
+
 	$cache_key = 'wp_tesla_api_request_' . md5( $endpoint . $method . json_encode( $params ) . json_encode( $request_args ) );
 
 	$api_response = [
@@ -87,7 +95,7 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 			$api_response['data']      = $cached_response;
 			$api_response['cache_hit'] = true;
 
-			return apply_filters( __FUNCTION__, $api_response, $method, $params, $request_args );
+			return apply_filters( $filter_name, $api_response, $method, $params, $request_args, $args );
 		}
 	}
 
@@ -120,7 +128,7 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 			if ( ! empty( $data ) ) {
 				$api_response['data'] = $data;
 
-				$cache_time = empty( $params['cache_time'] ) ? get_cache_time() : $params['cache_time'];
+				$cache_time = empty( $params['cache_time'] ) ? Helpers\get_cache_time() : $params['cache_time'];
 
 				$allowed_codes = [
 					200,
@@ -134,7 +142,7 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 		}
 	}
 
-	return apply_filters( __FUNCTION__, $api_response );
+	return apply_filters( $filter_name, $api_response, $method, $params, $request_args, $args );
 }
 
 /**
@@ -155,7 +163,7 @@ function get_default_request_params() {
 		'cache_time'     => 0,
 	];
 
-	return apply_filters( __FUNCTION__, $params );
+	return apply_filters( 'wp_tesla_api_get_default_request_params', $params );
 }
 
 /**
@@ -185,41 +193,12 @@ function invalidate_api_cache() {
 }
 
 /**
- * Converts an API response to WP_Error if the response is an error.
- *
- * @param  array $response The response data.
- * @return mixed
- */
-function response_to_error( $response ) {
-
-	if ( isset( $response['data'] ) && is_array( $response['data'] ) && ! empty( $response['data'] ) ) {
-		$data = $response['data'][0];
-		if ( isset( $data->error_code ) && $data->message ) {
-			return new \WP_Error( $data->error_code, $data->message, $response );
-		}
-	}
-
-	return $response;
-}
-
-/**
- * Gets a random API caching time in seconds.
- *
- * @param int $min_seconds Minimum seconds, defaults to 15.
- * @param int $max_seconds Maximum seconds, defaults to 20.
- * @return int
- */
-function get_cache_time( $min_seconds = MINUTE_IN_SECONDS * 15, $max_seconds = MINUTE_IN_SECONDS * 20 ) {
-	return apply_filters( __FUNCTION__, mt_rand( $min_seconds, $max_seconds ) );
-}
-
-/**
  * Get the base API URL.
  *
  * @return string
  */
 function get_base_url() {
-	return apply_filters( __FUNCTION__, 'https://owner-api.teslamotors.com' );
+	return apply_filters( 'wp_tesla_api_get_base_url', 'https://owner-api.teslamotors.com' );
 }
 
 /**
@@ -240,7 +219,7 @@ function get_token( $user_id = 0, $should_refresh = false ) {
 
 	if ( empty( $expire_timestamp ) ) {
 		$expire_timestamp = $current_time;
-		update_user_option( $user_id, $expire_key, $expire_timestamp );
+		update_user_option( $user_id, get_expire_key(), $expire_timestamp );
 	}
 
 	// Do we have a token?
@@ -256,10 +235,10 @@ function get_token( $user_id = 0, $should_refresh = false ) {
 	}
 
 	if ( $should_refresh ) {
-		$token = refresh_token();
+		$token = refresh_token( $user_id );
 	}
 
-	return apply_filters( __FUNCTION__, $token, $should_refresh );
+	return apply_filters( 'wp_tesla_api_get_token', $token, $should_refresh );
 }
 
 /**
@@ -270,7 +249,7 @@ function get_token( $user_id = 0, $should_refresh = false ) {
  */
 function get_expire_buffer() {
 	$buffer = get_option( 'wp_tesla_token_expire_buffer', DAY_IN_SECONDS * 3 );
-	return absint( apply_filters( __FUNCTION__, $buffer ) );
+	return absint( apply_filters( 'wp_tesla_api_get_expire_buffer', $buffer ) );
 }
 
 /**
@@ -279,7 +258,7 @@ function get_expire_buffer() {
  * @return string
  */
 function get_token_key() {
-	return apply_filters( __FUNCTION__, 'wp_tesla_token' );
+	return apply_filters( 'wp_tesla_api_get_token_key', 'wp_tesla_token' );
 }
 
 /**
@@ -288,7 +267,7 @@ function get_token_key() {
  * @return string
  */
 function get_refresh_token_key() {
-	return apply_filters( __FUNCTION__, 'wp_tesla_refresh_token' );
+	return apply_filters( 'wp_tesla_api_get_refresh_token_key', 'wp_tesla_refresh_token' );
 }
 
 /**
@@ -297,7 +276,7 @@ function get_refresh_token_key() {
  * @return string
  */
 function get_expire_key() {
-	return apply_filters( __FUNCTION__, 'wp_tesla_token_expiration_timestamp' );
+	return apply_filters( 'wp_tesla_api_get_expire_key', 'wp_tesla_token_expiration_timestamp' );
 }
 
 /**
@@ -307,6 +286,7 @@ function get_expire_key() {
  * @return bool
  */
 function refresh_token( $user_id = 0 ) {
+	// TODO.
 	return false;
 }
 
@@ -316,7 +296,8 @@ function refresh_token( $user_id = 0 ) {
  * @return string
  */
 function get_client_id() {
-	return get_option( 'wp_tesla_client_id', '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384' );
+	$id = get_option( 'wp_tesla_client_id', '81527cff06843c8634fdc09e8ac0abefb46ac849f38fe1e431c2ef2106796384' );
+	return apply_filters( 'wp_tesla_api_get_client_id', $id );
 }
 
 /**
@@ -325,7 +306,8 @@ function get_client_id() {
  * @return string
  */
 function get_client_secret() {
-	return get_option( 'wp_tesla_client_secret', 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3' );
+	$secret = get_option( 'wp_tesla_client_secret', 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3' );
+	return apply_filters( 'wp_tesla_api_get_client_secret', $secret );
 }
 
 /**
@@ -381,13 +363,10 @@ function authenticate( $email, $password, $user_id = 0 ) {
 			$expires_at = $data->created_at + $data->expires_in;
 
 			update_user_option( $user_id, get_expire_key(), $expires_at );
-
-			$results['token']         = get_token( $user_id );
-			$results['refresh_token'] = get_user_option( get_refresh_token_key(), $user_id );
 		}
 	}
 
-	return $results;
+	return apply_filters( 'wp_tesla_api_authenticate', $results );
 }
 
 /**
@@ -396,8 +375,9 @@ function authenticate( $email, $password, $user_id = 0 ) {
  * @param  integer $user_id The user ID.
  * @return array
  */
-function list_vehicles( $user_id = 0 ) {
+function vehicles( $user_id = 0 ) {
 
+	// TODO add list of options codes from https://raw.githubusercontent.com/timdorr/tesla-api/master/docs/vehicle/optioncodes.md.
 	$api_response = request( '/api/1/vehicles' );
 
 	$vehicles = [];
@@ -410,5 +390,5 @@ function list_vehicles( $user_id = 0 ) {
 		}
 	}
 
-	return apply_filters( __FUNCTION__, $vehicles );
+	return apply_filters( 'wp_tesla_api_list_vehicles', $vehicles, $user_id );
 }
