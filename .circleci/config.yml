@@ -11,6 +11,7 @@ jobs:
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
         environment:
           MYSQL_USER: root
+          MYSQL_HOST: "127.0.0.1"
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_DATABASE: wordpress_test
 
