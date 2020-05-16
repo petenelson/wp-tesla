@@ -2,8 +2,19 @@ version: 2
 jobs:
 
   build-and-deploy:
+
     docker:
       - image: circleci/php:7.4-node-browsers
+        environment:
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
+      - image: mysql:5.7
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+        environment:
+          MYSQL_USER: root
+          MYSQL_PASSWORD: password
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+
     steps:
       - checkout
       - add_ssh_keys:
@@ -12,6 +23,9 @@ jobs:
       - run:
           name: Build
           command: ./bin/build.sh
+      - run:
+          name: Test
+          command: ./bin/test.sh
       - run:
           name: Deploy
           command: ./bin/deploy.sh
@@ -26,4 +40,4 @@ workflows:
               only:
                 - master
                 - develop
-                - feature/circleci-deployment
+                - feature/circleci-unit-tests
