@@ -17,6 +17,9 @@ jobs:
 
     steps:
       - checkout
+      - restore_cache
+        keys:
+          - wp-tesla-{{ .Branch }}-{{ checksum "package-lock.json" }}-{{ checksum "composer.lock" }}
       - add_ssh_keys:
           fingerprints:
             - "f3:0b:d0:fa:3c:cc:95:b8:c7:59:c9:ac:39:52:85:48"
@@ -24,11 +27,18 @@ jobs:
           name: Build
           command: ./bin/build.sh
       - run:
-          name: Test
-          command: ./bin/test.sh
+          name: Install Tests
+          command: ./bin/install-test.sh
+      - run:
+          name: Run Tests
+          command: ./bin/run-tests.sh
       - run:
           name: Deploy
           command: ./bin/deploy.sh
+      - save_cache:
+          paths:
+            - node_modules
+            - vendor
 
 workflows:
   version: 2
