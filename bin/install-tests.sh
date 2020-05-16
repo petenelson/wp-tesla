@@ -25,6 +25,7 @@ sed -i "s/youremptytestdbnamehere/wordpress_test/" wp-tests-config.php
 sed -i "s/yourusernamehere/root/" wp-tests-config.php
 sed -i "s/yourpasswordhere//" wp-tests-config.php
 
+sudo apt update
 sudo apt install -y mysql-client
 
 # Create WordPress database.
