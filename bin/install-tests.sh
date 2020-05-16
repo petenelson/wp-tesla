@@ -25,6 +25,9 @@ sed -i "s/youremptytestdbnamehere/wordpress_test/" wp-tests-config.php
 sed -i "s/yourusernamehere/root/" wp-tests-config.php
 sed -i "s/yourpasswordhere//" wp-tests-config.php
 
+# Verify mysql
+mysql -e 'show databases;' -h 127.0.0.1 -uroot --password=""
+
 # Switch back to the plugin dir
 popd
 
