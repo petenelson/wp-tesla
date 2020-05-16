@@ -8,7 +8,7 @@ set -euo pipefail
 
 export WP_DEVELOP_DIR=/tmp/wordpress/
 
-less wp-tests-config.php
+cat /tmp/wordpress/wp-tests-config.php
 
 # Verify mysql
 sudo apt update
