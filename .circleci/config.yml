@@ -11,7 +11,7 @@ jobs:
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
         environment:
           MYSQL_USER: root
-          MYSQL_ROOT_HOST: %
+          MYSQL_ROOT_HOST=%
           MYSQL_ALLOW_EMPTY_PASSWORD: true
 
     steps:
