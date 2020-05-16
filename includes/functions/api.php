@@ -19,7 +19,7 @@ namespace WPTesla\API;
 function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 
 	$caching_enabled = apply_filters( __FUNCTION__ . '_caching_enabled', true );
-	$max_retries     = apply_filters( __FUNCTION__ . '_max_retries', 5 );
+	$max_retries     = apply_filters( __FUNCTION__ . '_max_retries', 3 );
 	$retries         = 0;
 
 	$response = null;
@@ -31,12 +31,7 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 
 	$params = wp_parse_args(
 		$params,
-		[
-			// Lets us fine tune the cache time for requests.
-			'cache_response' => true,
-			'cache_time'     => 0,
-			'body'           => false,
-		]
+		get_default_request_params()
 	);
 
 	$request_args = [
@@ -47,6 +42,14 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 		],
 	];
 
+	if ( ! empty( $params['form'] ) ) {
+		$request_args['body'] = http_build_query( $params['form'] );
+
+		unset( $params['form'] );
+
+		$request_args['headers']['Content-type'] = 'application/x-www-form-urlencoded';
+	}
+
 	$request_args = array_merge( $request_args, (array) $args );
 
 	// Convert the data in the body item to JSON.
@@ -54,8 +57,15 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 		$request_args['body'] = json_encode( $params['body'] );
 	}
 
-	if ( 'PATCH' === $method || 'DELETE' === $method ) {
+	if ( 'PATCH' === $method || 'DELETE' === $method || ! $params['cache_response'] ) {
 		$caching_enabled = false;
+	}
+
+	if ( $params['require_token'] ) {
+		$token = get_token( $params['user_id'] );
+		if ( ! empty( $token ) ) {
+			$request_args['headers']['Authorization'] = 'Bearer ' . trim( $token );
+		}
 	}
 
 	$cache_key = 'wp_tesla_api_request_' . md5( $endpoint . $method . json_encode( $params ) . json_encode( $request_args ) );
@@ -128,6 +138,27 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 }
 
 /**
+ * Gets the default API request parameters.
+ *
+ * @return array
+ */
+function get_default_request_params() {
+
+	$params = [
+		'user_id'        => get_current_user_id(),
+		'body'           => false,
+		'form'           => false,
+		'require_token'  => true,
+		'cache_response' => true,
+
+		// Lets us fine tune the cache time for requests.
+		'cache_time'     => 0,
+	];
+
+	return apply_filters( __FUNCTION__, $params );
+}
+
+/**
  * Gets the cache incremenetor.
  *
  * @return int
@@ -137,7 +168,7 @@ function get_cache_increment() {
 	$cache_key = 'wp_tesla_api_increment';
 	$increment = wp_cache_get( $cache_key );
 	if ( false === $increment ) {
-		$increment = current_time( 'timestamp' );
+		$increment = microtime();
 		wp_cache_set( $cache_key, $increment, '', DAY_IN_SECONDS * 1 );
 	}
 
@@ -192,23 +223,24 @@ function get_base_url() {
 }
 
 /**
- * Gets an API token. Automatically refreshes the token if-needed.
+ * Gets the user's API token. Automatically refreshes the token if-needed.
  *
+ * @param int  $user_id        The user ID.
  * @param bool $should_refresh Flag to force a token refresh.
  * @return string
  */
-function get_token( $should_refresh = false ) {
+function get_token( $user_id = 0, $should_refresh = false ) {
 
 	// How soon before the token expires should we refresh it?
 	$buffer = get_expire_buffer();
 
-	$token            = get_option( get_token_key() );
-	$expire_timestamp = get_option( get_expire_key() );
-	$current_time     = current_time( 'timestamp' );
+	$token            = get_user_option( get_token_key(), $user_id );
+	$expire_timestamp = get_user_option( get_expire_key(), $user_id );
+	$current_time     = time();
 
 	if ( empty( $expire_timestamp ) ) {
 		$expire_timestamp = $current_time;
-		update_option( $expire_key, $expire_timestamp );
+		update_user_option( $user_id, $expire_key, $expire_timestamp );
 	}
 
 	// Do we have a token?
@@ -227,17 +259,18 @@ function get_token( $should_refresh = false ) {
 		$token = refresh_token();
 	}
 
-	return $token;
+	return apply_filters( __FUNCTION__, $token, $should_refresh );
 }
 
 /**
  * Gets the buffer time in seconds for token expiration. Allows us to
- * refresh the token before it's had expired in the API infrastructure.
+ * refresh the token before it has expired in the API infrastructure.
  *
  * @return int
  */
 function get_expire_buffer() {
-	return absint( apply_filters( __FUNCTION__, MINUTE_IN_SECONDS ) );
+	$buffer = get_option( 'wp_tesla_token_expire_buffer', DAY_IN_SECONDS * 3 );
+	return absint( apply_filters( __FUNCTION__, $buffer ) );
 }
 
 /**
@@ -250,6 +283,15 @@ function get_token_key() {
 }
 
 /**
+ * The option key for storing the refresh token.
+ *
+ * @return string
+ */
+function get_refresh_token_key() {
+	return apply_filters( __FUNCTION__, 'wp_tesla_refresh_token' );
+}
+
+/**
  * The option key for storing the token expiration timestamp.
  *
  * @return string
@@ -259,47 +301,13 @@ function get_expire_key() {
 }
 
 /**
- * Refreshes the API token.
+ * Refreshes the user's API token.
  *
- * @return string
+ * @param int $user_id The user ID.
+ * @return bool
  */
-function refresh_token() {
-
-	$token = false;
-
-	$endpoint = get_base_url();
-	$endpoint = add_query_arg( 'grant_type', 'client_credentials', $endpoint );
-	$endpoint = apply_filters( __FUNCTION__ . '_endpoint', $endpoint );
-
-	$ids = get_api_account_ids();
-
-	$params = array(
-		'timeout' => 10,
-		'headers' => array(
-			'Content-Type'  => 'application/x-www-form-urlencoded',
-			'Authorization' => 'Basic ' . base64_encode( $ids['client'] . ':' . $ids['secret'] ),
-		),
-	);
-
-	$response      = wp_remote_post( $endpoint, $params );
-	$response_code = wp_remote_retrieve_response_code( $response );
-	$body          = wp_remote_retrieve_body( $response );
-
-	if ( 200 === absint( $response_code ) ) {
-		$token_data = json_decode( $body, true );
-		if ( ! empty( $token_data ) ) {
-
-			invalidate_api_cache();
-
-			$token             = sanitize_text_field( $token_data['access_token'] );
-			$expires_timestamp = current_time( 'timestamp' ) + absint( $token_data['expires_in'] );
-
-			update_option( get_token_key(), $token );
-			update_option( get_expire_key(), $expires_timestamp );
-		}
-	}
-
-	return apply_filters( __FUNCTION__, $token );
+function refresh_token( $user_id = 0 ) {
+	return false;
 }
 
 /**
@@ -318,4 +326,89 @@ function get_client_id() {
  */
 function get_client_secret() {
 	return get_option( 'wp_tesla_client_secret', 'c7257eb71a564034f9419ee651c7d0e5f7aa6bfbd18bafb5c5c033b093bb2fa3' );
+}
+
+/**
+ * Authenticates the user with the Tesla API.
+ *
+ * @param  string $email    The email address.
+ * @param  string $password The password.
+ * @param  int    $user_id  The WordPress user ID, defaults to the
+ *                          current user ID.
+ * @return array
+ */
+function authenticate( $email, $password, $user_id = 0 ) {
+
+	$results = [
+		'authenticated' => false,
+		'response_code' => false,
+		'user_id'       => $user_id,
+	];
+
+	$form_values = [
+		'grant_type'     => 'password',
+		'client_id'      => get_client_id(),
+		'client_secret'  => get_client_secret(),
+		'email'          => $email,
+		'password'       => $password,
+	];
+
+	$api_response = request(
+		'/oauth/token',
+		'POST',
+		[
+			'cache_response' => false,
+			'require_token'  => false,
+			'form'           => $form_values,
+		]
+	);
+
+	$results['response_code'] = $api_response['response_code'];
+
+	if ( ! empty( $api_response['data'] ) && is_object( $api_response['data'] ) ) {
+
+		$data = $api_response['data'];
+
+		if ( isset( $data->access_token, $data->refresh_token, $data->created_at, $data->expires_in ) ) {
+
+			// Success!
+			$results['authenticated'] = true;
+
+			update_user_option( $user_id, get_token_key(), $data->access_token );
+			update_user_option( $user_id, get_refresh_token_key(), $data->refresh_token );
+
+			// Store the expiration date.
+			$expires_at = $data->created_at + $data->expires_in;
+
+			update_user_option( $user_id, get_expire_key(), $expires_at );
+
+			$results['token']         = get_token( $user_id );
+			$results['refresh_token'] = get_user_option( get_refresh_token_key(), $user_id );
+		}
+	}
+
+	return $results;
+}
+
+/**
+ * Gets a list of vehicles for a user.
+ *
+ * @param  integer $user_id The user ID.
+ * @return array
+ */
+function list_vehicles( $user_id = 0 ) {
+
+	$api_response = request( '/api/1/vehicles' );
+
+	$vehicles = [];
+
+	if ( ! empty( $api_response['data'] ) && is_object( $api_response['data'] ) ) {
+		if ( isset( $api_response['data']->response ) && is_array( $api_response['data']->response ) ) {
+			foreach ( $api_response['data']->response as $api_response ) {
+				$vehicles[] = (array) $api_response;
+			}
+		}
+	}
+
+	return apply_filters( __FUNCTION__, $vehicles );
 }

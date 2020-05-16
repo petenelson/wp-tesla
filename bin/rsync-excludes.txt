@@ -1,7 +1,16 @@
 *.git
 *.gitignore
 *.circleci
+.editorconfig
+.eslintrc
+.stylelintrc
+README.md
+.circleci/
 bin/
+assets/
+config/
+node_modules/
+vendor/
 composer.json
 composer.lock
 package.json

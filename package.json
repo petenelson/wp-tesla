@@ -1,0 +1,102 @@
+{
+	"name": "wp-tesla",
+	"version": "1.0.0",
+	"description": "WordPress Tesla Plugin",
+	"homepage": "https://github.com/petenelson/wp-tesla",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/petenelson/wp-tesla"
+	},
+	"author": {
+		"name": "Pete Nelson",
+		"email": "pete@petenelson.com",
+		"url": "https://petenelson.io",
+		"role": "developer"
+	},
+	"scripts": {
+		"build": "NODE_ENV=production webpack --config config/webpack.prod.js",
+		"dev": "NODE_ENV=development webpack --config config/webpack.dev.js",
+		"watch": "NODE_ENV=development webpack --watch --config config/webpack.dev.js",
+		"build-release": "npm install && composer install --no-dev -o && npm run build",
+		"lint-release": "npm install && composer install && npm run lint",
+		"lint-css": "stylelint assets/css",
+		"lint-js": "eslint assets/js",
+		"lint-php": "composer run lint",
+		"format-js": "eslint --fix assets/js",
+		"lint": "npm run lint-css && npm run lint-js && npm run lint-php",
+		"format": "npm run format-js",
+		"test:a11y": "node tests/accessibility/compliance/pa11y.js"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.css": [
+			"stylelint"
+		],
+		"*.js": [
+			"eslint"
+		],
+		"*.php": [
+			"./vendor/bin/phpcs --extensions=php --warning-severity=8 -s"
+		]
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@10up/eslint-config": "^1.0.9",
+		"@10up/stylelint-config": "^1.0.9",
+		"@babel/core": "^7.7.7",
+		"@babel/preset-env": "^7.7.7",
+		"@babel/preset-react": "^7.7.4",
+		"@babel/register": "^7.7.7",
+		"@wordpress/babel-preset-default": "^4.8.0",
+		"@wordpress/element": "^2.10.0",
+		"babel-eslint": "^10.0.3",
+		"babel-loader": "^8.0.6",
+		"backstopjs": "^4.4",
+		"body-scroll-lock": "^3.0.2",
+		"browser-sync": "^2.26.7",
+		"browser-sync-webpack-plugin": "^2.2.2",
+		"browserslist": "^4.8.2",
+		"classnames": "^2.2.6",
+		"clean-webpack-plugin": "^3.0.0",
+		"copy-webpack-plugin": "^5.1.1",
+		"core-js": "^3.6.0",
+		"css-loader": "^3.4.0",
+		"cssnano": "^4.1.10",
+		"eslint": "^6.8.0",
+		"eslint-loader": "^3.0.3",
+		"eslint-plugin-react": "^7.17.0",
+		"eslint-plugin-react-hooks": "^4.0.2",
+		"husky": "^3.1.0",
+		"imagemin-webpack-plugin": "^2.4.2",
+		"lint-staged": "^9.5.0",
+		"mini-css-extract-plugin": "^0.9.0",
+		"pa11y": "^5.3.0",
+		"postcss-editor-styles": "^0.3.0",
+		"postcss-import": "^12.0.1",
+		"postcss-loader": "^3.0.0",
+		"postcss-pixels-to-rem": "^0.8.0",
+		"postcss-preset-env": "^6.7.0",
+		"postcss-pxtorem": "^5.1.1",
+		"stylelint": "^9.10.1",
+		"stylelint-config-wordpress": "^14.0.0",
+		"stylelint-declaration-use-variable": "^1.7.2",
+		"stylelint-order": "^2.2.1",
+		"stylelint-webpack-plugin": "^1.1.2",
+		"terser": "^4.4.3",
+		"tiny-slider": "^2.9.2",
+		"utilitymove": "^1.0.5",
+		"webpack": "^4.43.0",
+		"webpack-cli": "^3.3.11",
+		"webpack-fix-style-only-entries": "^0.4.0",
+		"webpack-merge": "^4.2.2",
+		"webpackbar": "^4.0.0"
+	},
+	"engines": {
+		"node": ">=8.11"
+	},
+	"dependencies": {}
+}
