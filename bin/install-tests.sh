@@ -29,7 +29,7 @@ sudo apt update
 sudo apt install -y default-mysql-client
 
 # Create WordPress database.
-mysql -e 'CREATE DATABASE wordpress_test;' -hlocalhost -uroot
+mysql -e 'CREATE DATABASE wordpress_test;' -hlocalhost -uroot --password=""
 
 # Switch back to the plugin dir
 popd
