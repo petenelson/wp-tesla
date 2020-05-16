@@ -8,6 +8,8 @@ set -euo pipefail
 
 # Set up WordPress installation.
 export WP_DEVELOP_DIR=/tmp/wordpress/
+export WP_VERSION=5.4.1
+
 mkdir -p $WP_DEVELOP_DIR
 
 # Use the Git mirror of WordPress.
