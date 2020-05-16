@@ -7,12 +7,10 @@ jobs:
       - image: circleci/php:7.4-node-browsers
         environment:
           MYSQL_USER: root
-          MYSQL_PASSWORD: password
       - image: circleci/mysql:5.7.30
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
         environment:
           MYSQL_USER: root
-          MYSQL_PASSWORD: password
           MYSQL_ALLOW_EMPTY_PASSWORD: true
 
     steps:
@@ -28,7 +26,7 @@ jobs:
           command: ./bin/build.sh
       - run:
           name: Install Tests
-          command: ./bin/install-test.sh
+          command: ./bin/install-tests.sh
       - run:
           name: Run Tests
           command: ./bin/run-tests.sh

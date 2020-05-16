@@ -21,7 +21,7 @@ cp wp-tests-config-sample.php wp-tests-config.php
 
 sed -i "s/youremptytestdbnamehere/wordpress_test/" wp-tests-config.php
 sed -i "s/yourusernamehere/root/" wp-tests-config.php
-sed -i "s/yourpasswordhere/password/" wp-tests-config.php
+sed -i "s/yourpasswordhere//" wp-tests-config.php
 
 # Create WordPress database.
 mysql -e 'CREATE DATABASE wordpress_test;' -hlocalhost -uroot -ppassword
