@@ -12,7 +12,7 @@ cat /tmp/wordpress/wp-tests-config.php
 
 # Verify mysql
 sudo apt update
-sudo apt install -y default-mysql-client php-mysql
+sudo apt install -y default-mysql-client php7.0-mysql
 
 php -i
 
