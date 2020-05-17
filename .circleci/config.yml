@@ -4,7 +4,7 @@ jobs:
   build-and-deploy:
 
     docker:
-      - image: circleci/php:7.4.0-cli-stretch-node
+      - image: circleci/php:7.3.0-cli-stretch-node
         environment:
           MYSQL_USER: root
       - image: circleci/mysql:5.7.30
