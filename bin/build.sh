@@ -7,7 +7,7 @@ set -x
 set -euo pipefail
 
 apt-get update
-apt install nodejs
+apt install -y nodejs
 
 composer install
 npm install
