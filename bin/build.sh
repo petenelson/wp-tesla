@@ -6,6 +6,9 @@ set -x
 # Catch Errors
 set -euo pipefail
 
+apt-get update
+apt install nodejs
+
 composer install
 npm install
 npm run build
