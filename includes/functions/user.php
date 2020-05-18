@@ -192,6 +192,13 @@ function display_logged_in_template() {
 	echo wp_json_encode( $vehicles, JSON_PRETTY_PRINT );
 	echo '</pre>';
 
+	if ( is_array( $vehicles ) ) {
+		foreach ( $vehicles as $vehicle ) {
+			$vehicle = (array) $vehicle;
+			\WPTesla\Vehicle\sync_vehicle( $vehicle['id_s'], get_current_user_id(), $vehicle );
+		}
+	}
+
 	?>
 
 	<a href="<?php echo esc_url( $logout_url ); ?>" class="button button-primary">
