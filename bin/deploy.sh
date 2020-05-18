@@ -6,7 +6,7 @@ set -x
 # Catch Errors
 set -euo pipefail
 
-exit 1
+exit 0
 
 ssh-keyscan -H petenelson.io >> ~/.ssh/known_hosts
 
