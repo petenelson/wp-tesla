@@ -27,6 +27,7 @@ $files = [
 	'functions/api.php',
 	'functions/rest.php',
 	'functions/user.php',
+	'functions/vehicle.php',
 	'post-types/tesla.php',
 ];
 
