@@ -16,9 +16,9 @@ export WP_DEVELOP_DIR=/tmp/wordpress/
 # apt-get -y update
 # apt-get -y install libc6-dev libicu-dev libxml2-dev
 
-apt-get update
--E docker-php-ext-install mysqli
-apt-get install mysql-client
+sudo apt-get update
+sudo -E docker-php-ext-install mysqli
+sudo apt-get install mysql-client
 
 # Verify mysql
 mysql -e 'show databases;' -h 127.0.0.1 -uroot --password=""
