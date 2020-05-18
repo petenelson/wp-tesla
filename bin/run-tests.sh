@@ -10,20 +10,15 @@ export WP_DEVELOP_DIR=/tmp/wordpress/
 
 # cat /tmp/wordpress/wp-tests-config.php
 
-echo "Updating APT Sources ..."
-sudo rm -rf /var/lib/apt/lists/*
-sudo sh -c "printf '\ndeb http://ftp.us.debian.org/debian sid main\n' >> /etc/apt/sources.list"
-sudo apt -yqq update
-sudo apt -yqq install libc6-dev libicu-dev libxml2-dev
+# echo "Updating APT Sources ..."
+# sudo rm -rf /var/lib/apt/lists/*
+# sudo sh -c "printf '\ndeb http://ftp.us.debian.org/debian sid main\n' >> /etc/apt/sources.list"
+# apt-get -y update
+# apt-get -y install libc6-dev libicu-dev libxml2-dev
 
-echo 'Updating ...'
-sudo apt-get update
-echo 'Installing Subversion ...'
-sudo apt-get install subversion
-echo 'Installing mysqli ...'
-sudo -E docker-php-ext-install mysqli
-echo 'Installing mysql-client ...'
-sudo apt-get install mysql-client
+apt-get update
+-E docker-php-ext-install mysqli
+apt-get install mysql-client
 
 # Verify mysql
 mysql -e 'show databases;' -h 127.0.0.1 -uroot --password=""
