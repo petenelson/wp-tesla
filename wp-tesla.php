@@ -29,6 +29,7 @@ $files = [
 	'functions/user.php',
 	'functions/vehicle.php',
 	'post-types/tesla.php',
+	'taxonomies/option-code.php',
 ];
 
 foreach ( $files as $file ) {
@@ -44,3 +45,4 @@ register_deactivation_hook( __FILE__, '\WPTesla\Core\deactivate' );
 \WPTesla\User\setup();
 \WPTesla\REST\setup();
 \WPTesla\PostTypes\Tesla\setup();
+\WPTesla\Taxonomies\OptionCode\setup();

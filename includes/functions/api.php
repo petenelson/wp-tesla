@@ -377,7 +377,6 @@ function authenticate( $email, $password, $user_id = 0 ) {
  */
 function vehicles( $user_id = 0 ) {
 
-	// TODO add list of options codes from https://raw.githubusercontent.com/timdorr/tesla-api/master/docs/vehicle/optioncodes.md.
 	$api_response = request( '/api/1/vehicles' );
 
 	$vehicles = [];
