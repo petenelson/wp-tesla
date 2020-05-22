@@ -210,16 +210,18 @@ function get_base_url() {
  */
 function get_token( $user_id = 0, $should_refresh = false ) {
 
+	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
 	// How soon before the token expires should we refresh it?
 	$buffer = get_expire_buffer();
 
 	$token            = get_user_option( get_token_key(), $user_id );
-	$expire_timestamp = get_user_option( get_expire_key(), $user_id );
+	$expire_timestamp = get_user_option( get_expires_key(), $user_id );
 	$current_time     = time();
 
 	if ( empty( $expire_timestamp ) ) {
 		$expire_timestamp = $current_time;
-		update_user_option( $user_id, get_expire_key(), $expire_timestamp );
+		update_user_option( $user_id, get_expires_key(), $expire_timestamp );
 	}
 
 	// Do we have a token?
@@ -271,23 +273,125 @@ function get_refresh_token_key() {
 }
 
 /**
+ * The option key for storing the token creation timestamp.
+ *
+ * @return string
+ */
+function get_created_key() {
+	return apply_filters( 'wp_tesla_api_get_created_key', 'wp_tesla_token_created_timestamp' );
+}
+
+/**
  * The option key for storing the token expiration timestamp.
  *
  * @return string
  */
-function get_expire_key() {
-	return apply_filters( 'wp_tesla_api_get_expire_key', 'wp_tesla_token_expiration_timestamp' );
+function get_expires_key() {
+	return apply_filters( 'wp_tesla_api_get_expires_key', 'wp_tesla_token_expires_timestamp' );
 }
 
 /**
  * Refreshes the user's API token.
  *
  * @param int $user_id The user ID.
- * @return bool
+ * @return array
  */
 function refresh_token( $user_id = 0 ) {
-	// TODO.
-	return false;
+
+	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
+	$refresh_token = get_user_option( get_refresh_token_key(), $user_id );
+
+	if ( empty( $refresh_token ) ) {
+		return false;
+	}
+
+	$form_values = [
+		'grant_type'     => 'refresh_token',
+		'client_id'      => get_client_id(),
+		'client_secret'  => get_client_secret(),
+		'refresh_token'  => $refresh_token,
+	];
+
+	$api_response = request(
+		'/oauth/token',
+		'POST',
+		[
+			'cache_response' => false,
+			'require_token'  => false,
+			'form'           => $form_values,
+		]
+	);
+
+	$results = process_token_response( $api_response, $user_id );
+
+	return apply_filters( 'wp_tesla_api_refresh_token', $results );
+}
+
+/**
+ * Revokes the user's API token.
+ *
+ * @param string $token The user's API token.
+ * @return void
+ */
+function revoke_token( $token ) {
+
+	if ( empty( $token ) ) {
+		return;
+	}
+
+	$form_values = [
+		'token' => $token,
+	];
+
+	$api_response = request(
+		'/oauth/revoke',
+		'POST',
+		[
+			'cache_response' => false,
+			'require_token'  => false,
+			'form'           => $form_values,
+		]
+	);
+}
+
+/**
+ * Processes authentication or refresh token responses.
+ *
+ * @param  array $api_response The API response.
+ * @param  int   $user_id      The user ID.
+ * @return array $results
+ */
+function process_token_response( $api_response, $user_id = 0 ) {
+
+	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
+	$results = [
+		'authenticated'  => false,
+		'response_code'  => false,
+		'user_id'        => $user_id,
+		'response_code'  => $api_response['response_code'],
+	];
+
+	if ( ! empty( $api_response['data'] ) && is_object( $api_response['data'] ) ) {
+
+		$data = $api_response['data'];
+
+		if ( 200 === $results['response_code'] && isset( $data->access_token, $data->refresh_token, $data->created_at, $data->expires_in ) ) {
+
+			// Success!
+			$results['authenticated'] = true;
+
+			update_user_option( $user_id, get_token_key(), $data->access_token );
+			update_user_option( $user_id, get_refresh_token_key(), $data->refresh_token );
+			update_user_option( $user_id, get_created_key(), $data->created_at );
+
+			// Store the expiration date, all UTC.
+			update_user_option( $user_id, get_expires_key(), $data->created_at + $data->expires_in );
+		}
+	}
+
+	return $results;
 }
 
 /**
@@ -321,11 +425,7 @@ function get_client_secret() {
  */
 function authenticate( $email, $password, $user_id = 0 ) {
 
-	$results = [
-		'authenticated' => false,
-		'response_code' => false,
-		'user_id'       => $user_id,
-	];
+	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
 	$form_values = [
 		'grant_type'     => 'password',
@@ -345,26 +445,7 @@ function authenticate( $email, $password, $user_id = 0 ) {
 		]
 	);
 
-	$results['response_code'] = $api_response['response_code'];
-
-	if ( ! empty( $api_response['data'] ) && is_object( $api_response['data'] ) ) {
-
-		$data = $api_response['data'];
-
-		if ( isset( $data->access_token, $data->refresh_token, $data->created_at, $data->expires_in ) ) {
-
-			// Success!
-			$results['authenticated'] = true;
-
-			update_user_option( $user_id, get_token_key(), $data->access_token );
-			update_user_option( $user_id, get_refresh_token_key(), $data->refresh_token );
-
-			// Store the expiration date.
-			$expires_at = $data->created_at + $data->expires_in;
-
-			update_user_option( $user_id, get_expire_key(), $expires_at );
-		}
-	}
+	$results = process_token_response( $api_response, $user_id );
 
 	return apply_filters( 'wp_tesla_api_authenticate', $results );
 }
@@ -377,7 +458,15 @@ function authenticate( $email, $password, $user_id = 0 ) {
  */
 function vehicles( $user_id = 0 ) {
 
-	$api_response = request( '/api/1/vehicles' );
+	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
+	$api_response = request(
+		'/api/1/vehicles',
+		'GET',
+		[
+			'user_id' => $user_id,
+		]
+	);
 
 	$vehicles = [];
 
