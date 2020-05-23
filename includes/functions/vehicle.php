@@ -40,12 +40,6 @@ function get_existing_vehicle( $vehicle_id, $user_id = 0 ) {
 		return false;
 	}
 
-	$cache_key      = 'wp_tesla_get_existing_vehicle_' . md5( wp_json_encode( [ $vehicle_id, $user_id, Cache\get_cache_invalidator() ] ) );
-	$cached_results = wp_cache_get( $cache_key );
-	if ( false !== $cached_results && is_a( $cached_results, '\WP_Post' ) ) {
-		return apply_filters( 'wp_tesla_get_existing_vehicle', $cached_results );
-	}
-
 	$query_args = [
 		'post_type'              => Tesla\get_post_type_name(),
 		'posts_per_page'         => 1,
@@ -60,13 +54,7 @@ function get_existing_vehicle( $vehicle_id, $user_id = 0 ) {
 
 	$vehicle = ! empty( $query->posts ) ? $query->posts[0] : false;
 
-	if ( ! empty( $vehicle ) ) {
-		$vehicle->vehicle_id = $vehicle_id;
-
-		wp_cache_set( $cache_key, $vehicle, '', Cache\get_cache_time() );
-	}
-
-	return apply_filters( 'wp_tesla_get_existing_vehicle', $vehicle );
+	return apply_filters( 'wp_tesla_get_existing_vehicle', $vehicle, $user_id );
 }
 
 /**
@@ -131,6 +119,15 @@ function get_charge_state_updated_key() {
 }
 
 /**
+ * Gets the meta key for storing the VIN.
+ *
+ * @return string
+ */
+function get_vin_key() {
+	return apply_filters( 'wp_tesla_vehicle_vin_key', 'wp_tesla_vehicle_vin' );
+}
+
+/**
  * Updates or creates a Tesla vehicle post
  *
  * @param string $vehicle_id   The Tesla vehicle ID.
@@ -140,6 +137,8 @@ function get_charge_state_updated_key() {
  * @return WP_Post
  */
 function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
+
+	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
 	$vehicle_id = trim( $vehicle_id );
 
@@ -173,9 +172,8 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
 		// Flag it with the vehicle ID so we can find it again.
 		if ( ! empty( $post_id ) ) {
 			update_post_meta( $post_id, get_vehicle_id_meta_prefix() . $vehicle_id, $vehicle_id );
+			$vehicle = get_post( $post_id );
 		}
-
-		$vehicle = get_post( $post_id );
 	}
 
 	if ( ! empty( $vehicle ) ) {
@@ -187,6 +185,8 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
 		];
 
 		wp_update_post( $postarr );
+
+		update_post_meta( $vehicle->ID, get_vin_key(), sanitize_text_field( $vehicle_data['vin'] ) );
 
 		$option_code_ids = [];
 
@@ -267,6 +267,24 @@ function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
 }
 
 /**
+ * Get the vehicle VIN.
+ *
+ * @param  int|WP_Post $post The post ID or object.
+ * @return int
+ */
+function get_vin( $post ) {
+
+	$vin = false;
+
+	$post = get_post( $post );
+	if ( is_a( $post, '\WP_Post' ) ) {
+		$vin = get_post_meta( $post->ID, get_vin_key(), true );
+	}
+
+	return apply_filters( 'wp_tesla_vehicle_get_vin', $vin, $post );
+}
+
+/**
  * Get the battery level for a vehicle.
  *
  * @param  string $vehicle_id The vehicle ID.
@@ -313,7 +331,9 @@ function sync_charge_state( $vehicle, $user_id = 0 ) {
 
 	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
-	if ( ! empty( $vehicle->vehicle_id ) ) {
+	$vehicle_id = get_vehicle_id( $vehicle->ID );
+
+	if ( ! empty( $vehicle_id ) ) {
 
 		// TODO implement wakeup.
 		$api_response = API\charge_state( $vehicle->vehicle_id, $user_id );

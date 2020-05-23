@@ -50,10 +50,10 @@ function get_cached_query( $query_args, $args = [] ) {
 
 			// Results of this callback are used when building the cache
 			// key to allow for invalidation.
-			'key_invalidator_callback' => 'get_cache_invalidator',
+			'key_invalidator_callback' => '\WPTesla\Cache\get_cache_invalidator',
 
 			// The function called to get the cache time.
-			'cache_time_callback' => 'get_cache_time',
+			'cache_time_callback' => '\WPTesla\Cache\get_cache_time',
 
 			// Default time if the callback isn't used.
 			'cache_time' => MINUTE_IN_SECONDS * 15,
