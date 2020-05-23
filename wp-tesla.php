@@ -29,6 +29,7 @@ $files = [
 	'functions/rest.php',
 	'functions/user.php',
 	'functions/vehicle.php',
+	'functions/cli.php',
 	'post-types/tesla.php',
 	'taxonomies/option-code.php',
 ];

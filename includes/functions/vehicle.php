@@ -269,19 +269,21 @@ function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
 /**
  * Get the vehicle VIN.
  *
- * @param  int|WP_Post $post The post ID or object.
- * @return int
+ * @param  string $vehicle_id The vehicle ID.
+ * @param  int    $user_id    The user ID.
+ * @return string
  */
-function get_vin( $post ) {
+function get_vin( $vehicle_id, $user_id = 0 ) {
 
 	$vin = false;
 
-	$post = get_post( $post );
-	if ( is_a( $post, '\WP_Post' ) ) {
-		$vin = get_post_meta( $post->ID, get_vin_key(), true );
+	$vehicle = get_existing_vehicle( $vehicle_id, $user_id );
+
+	if ( is_a( $vehicle, '\WP_Post' ) ) {
+		$vin = get_post_meta( $vehicle->ID, get_vin_key(), true );
 	}
 
-	return apply_filters( 'wp_tesla_vehicle_get_vin', $vin, $post );
+	return apply_filters( 'wp_tesla_vehicle_get_vin', $vin, $vehicle_id, $user_id );
 }
 
 /**
@@ -343,4 +345,103 @@ function sync_charge_state( $vehicle, $user_id = 0 ) {
 			update_post_meta( $vehicle->ID, get_charge_state_updated_key(), time() );
 		}
 	}
+}
+
+/**
+ * Wakes up a vehicle.
+ *
+ * @param  string $vehicle_id The vehicle ID.
+ * @param  int    $user_id    The user ID.
+ * @param  array  $args       Additonal args.
+ * @return bool
+ */
+function wakeup( $vehicle_id, $user_id = 0, $args = [] ) {
+
+	$args = wp_parse_args(
+		$args,
+		[
+			'show_cli_lines' => false,
+		]
+	);
+
+	$cli = true === $args['show_cli_lines'];
+
+	// Number of times we try to wakeup the vehicle.
+	$max_tries  = apply_filters( 'wp_tesla_wakeup_max_tries', 5 );
+
+	// Number of seconds to wait between wakeup tries in seconds.
+	$sleep_time = apply_filters( 'wp_tesla_wakeup_sleep_between_tries', 3 );
+
+	$online = false;
+
+	$tries = 1;
+
+	while ( ! $online && $tries <= $max_tries ) {
+
+		if ( $cli ) {
+			\WP_CLI::line(
+				sprintf(
+					'Attempting wakeup of %1$s, try #%2$d of %3$d...',
+					$vehicle_id,
+					$tries,
+					$max_tries
+				)
+			);
+		}
+
+		$api_response = API\wakeup( $vehicle_id, $user_id );
+
+		if ( ! empty( $api_response ) && is_object( $api_response ) && isset( $api_response->response ) ) {
+
+			$response = wp_parse_args(
+				(array) $api_response->response,
+				[
+					'state' => '',
+				]
+			);
+
+			if ( $cli ) {
+
+				if ( 'online' === $response['state'] ) {
+					\WP_CLI::success(
+						sprintf(
+							'%1$s',
+							$response['state']
+						)
+					);
+				} else {
+					\WP_CLI::warning(
+						sprintf(
+							'%1$s',
+							$response['state']
+						)
+					);
+				}
+			}
+
+			$online = 'online' === $response['state'];
+		}
+
+		if ( $online ) {
+			break;
+		}
+
+		$tries++;
+
+		if ( $tries <= $max_tries ) {
+
+			if ( $cli ) {
+				\WP_CLI::line(
+					sprintf(
+						'Sleeping for %1$d seconds...',
+						$sleep_time
+					)
+				);
+			}
+
+			sleep( $sleep_time );
+		}
+	}
+
+	return $online;
 }
