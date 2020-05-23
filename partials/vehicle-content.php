@@ -43,9 +43,6 @@ if ( is_singular( \WPTesla\PostTypes\Tesla\get_post_type_name() ) ) {
 		<li>
 			<?php esc_html_e( 'Estimated Range', 'wp-tesla' ); ?>: <?php echo esc_html( $estimated_range ); ?>
 		</li>
-		<li>
-			<?php esc_html_e( 'Vehicle ID', 'wp-tesla' ); ?>: <?php echo esc_html( $vehicle_id ); ?>
-		</li>
 	</ul>
 
 </div>
