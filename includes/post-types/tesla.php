@@ -7,6 +7,8 @@
 
 namespace WPTesla\PostTypes\Tesla;
 
+use WPTesla\Vehicle;
+
 /**
  * Default setup routine
  *
@@ -17,8 +19,16 @@ function setup() {
 		return __NAMESPACE__ . "\\$function";
 	};
 
-	// TODO prevent add new.
+	// TODO implement caps.
 	add_action( 'init', $n( 'register' ) );
+
+	add_action( 'manage_' . get_post_type_name() . '_posts_columns', $n( 'update_table_columns' ) );
+	add_action( 'manage_' . get_post_type_name() . '_posts_custom_column', $n( 'handle_columns' ), 10, 2 );
+
+	// TODO add row actions for sync, turn off quick edit.
+	add_action( 'wp_tesla_vehicle_do_custom_column_vehicle_id', $n( 'column_vehicle_id' ) );
+	add_action( 'wp_tesla_vehicle_do_custom_column_battery_level', $n( 'column_battery_level' ) );
+	add_action( 'wp_tesla_vehicle_do_custom_column_estimated_range', $n( 'column_estimated_range' ) );
 }
 
 /**
@@ -92,4 +102,102 @@ function get_post_type_args() {
  */
 function register() {
 	register_post_type( get_post_type_name(), get_post_type_args() );
+}
+
+/**
+ * Gets a list of custom columns and labels.
+ *
+ * @return array
+ */
+function get_custom_columns() {
+
+	$columns = [
+		'vehicle_id'      => __( 'ID', 'wp-tesla' ),
+		'battery_level'   => __( 'Battery', 'wp-tesla' ),
+		'estimated_range' => __( 'Range', 'wp-tesla' ),
+	];
+
+	return apply_filters( 'wp_tesla_vehicle_get_custom_columns', $columns );
+}
+
+/**
+ * Updates the columns for the list of vehicles in admin.
+ *
+ * @param array $columns List of columns.
+ */
+function update_table_columns( $columns ) {
+	$columns = array_merge( $columns, get_custom_columns() );
+
+	if ( isset( $columns['title'] ) ) {
+		$columns['title'] = __( 'Name' );
+	}
+
+	if ( isset( $columns['author'] ) ) {
+		unset( $columns['author'] );
+	}
+
+	return $columns;
+}
+
+/**
+ * Handles the custom columns.
+ *
+ * @param  string $column  The column name.
+ * @param  int    $post_id The post ID.
+ * @return void
+ */
+function handle_columns( $column, $post_id ) {
+
+	$vehicle_id = false;
+
+	if ( in_array( $column, array_keys( get_custom_columns() ), true ) ) {
+		$vehicle_id = Vehicle\get_vehicle_id( $post_id );
+	}
+
+	if ( ! empty( $vehicle_id ) ) {
+		do_action( 'wp_tesla_vehicle_do_custom_column_' . $column, $vehicle_id );
+	}
+}
+
+/**
+ * Outputs the vehicle ID value.
+ *
+ * @param  string $vehicle_id The vehicle ID.
+ * @return void
+ */
+function column_vehicle_id( $vehicle_id ) {
+	echo esc_html( $vehicle_id );
+}
+
+/**
+ * Outputs the vehicle battery level.
+ *
+ * @param  string $vehicle_id The vehicle ID.
+ * @return void
+ */
+function column_battery_level( $vehicle_id ) {
+	$battery_level = Vehicle\get_battery_level( $vehicle_id );
+
+	if ( false !== $battery_level ) {
+		$battery_level = $battery_level . '%';
+	}
+
+	echo esc_html( $battery_level );
+}
+
+/**
+ * Outputs the vehicle estimated range.
+ *
+ * @param  string $vehicle_id The vehicle ID.
+ * @return void
+ */
+function column_estimated_range( $vehicle_id ) {
+	$est_range = Vehicle\get_estimated_range( $vehicle_id );
+
+	if ( false !== $est_range ) {
+		// We'll look into km later.
+		$est_range = $est_range . 'mi';
+	}
+
+	echo esc_html( $est_range );
 }

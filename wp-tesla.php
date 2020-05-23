@@ -24,6 +24,7 @@ define( 'WP_TESLA_INC', WP_TESLA_PATH . 'includes/' );
 $files = [
 	'functions/core.php',
 	'functions/helpers.php',
+	'functions/cache.php',
 	'functions/api.php',
 	'functions/rest.php',
 	'functions/user.php',
