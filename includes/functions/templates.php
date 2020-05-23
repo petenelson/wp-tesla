@@ -30,7 +30,7 @@ function maybe_replace_vehicle_content( $content ) {
 
 	if ( is_singular( \WPTesla\PostTypes\Tesla\get_post_type_name() ) ) {
 		ob_start();
-		require_once WP_TESLA_PATH . 'partials/vehicle-content.php';
+		require WP_TESLA_PATH . 'partials/vehicle-content.php';
 		$content = ob_get_clean();
 	}
 
