@@ -1,0 +1,1912 @@
+[
+    {
+        "slug": "MDLS",
+        "name": "Model S",
+        "description": "This vehicle is a Model S"
+    },
+    {
+        "slug": "MS03",
+        "name": "Model S",
+        "description": "This vehicle is a Model S"
+    },
+    {
+        "slug": "MS04",
+        "name": "Model S",
+        "description": "This vehicle is a Model S"
+    },
+    {
+        "slug": "MDLX",
+        "name": "Model X",
+        "description": "This vehicle is a Model X"
+    },
+    {
+        "slug": "MDL3",
+        "name": "Model 3",
+        "description": "This vehicle is a Model 3"
+    },
+    {
+        "slug": "MDLY",
+        "name": "Model Y",
+        "description": "This vehicle is a Model Y"
+    },
+    {
+        "slug": "RENA",
+        "name": "Region: North America",
+        "description": ""
+    },
+    {
+        "slug": "RENC",
+        "name": "Region: Canada",
+        "description": ""
+    },
+    {
+        "slug": "REEU",
+        "name": "Region: Europe",
+        "description": ""
+    },
+    {
+        "slug": "AD02",
+        "name": "NEMA 14-50",
+        "description": ""
+    },
+    {
+        "slug": "AD04",
+        "name": "European 3-Phase",
+        "description": ""
+    },
+    {
+        "slug": "AD05",
+        "name": "European 3-Phase, IT",
+        "description": ""
+    },
+    {
+        "slug": "AD06",
+        "name": "Schuko (1 phase, 230V 13A)",
+        "description": ""
+    },
+    {
+        "slug": "AD07",
+        "name": "Red IEC309 (3 phase, 400V 16A)",
+        "description": ""
+    },
+    {
+        "slug": "AD08",
+        "name": "Blue Charging Adapter",
+        "description": ""
+    },
+    {
+        "slug": "AD09",
+        "name": "Adapter, Swiss (1 phase, 10A)",
+        "description": ""
+    },
+    {
+        "slug": "AD10",
+        "name": "Adapter, Denmark (1 phase, 13A)",
+        "description": ""
+    },
+    {
+        "slug": "AD11",
+        "name": "Adapter, Italy (1 phase, 13A)",
+        "description": ""
+    },
+    {
+        "slug": "AD15",
+        "name": "Adapter",
+        "description": "J1772"
+    },
+    {
+        "slug": "ADPX2",
+        "name": "Type 2 Public Charging Connector",
+        "description": ""
+    },
+    {
+        "slug": "ADX4",
+        "name": "No European 3-Phase",
+        "description": ""
+    },
+    {
+        "slug": "ADX5",
+        "name": "European 3-Phase, IT",
+        "description": ""
+    },
+    {
+        "slug": "ADX6",
+        "name": "No - Adapter, Schuko (1 phase, 13A)",
+        "description": ""
+    },
+    {
+        "slug": "ADX7",
+        "name": "No - 3-ph Red IEC309 (3 phase, 16A)",
+        "description": ""
+    },
+    {
+        "slug": "ADX9",
+        "name": "No - Adapter, Swiss (1 phase, 10A)",
+        "description": ""
+    },
+    {
+        "slug": "ADX8",
+        "name": "Blue IEC309 (1 phase, 230V 32A)",
+        "description": ""
+    },
+    {
+        "slug": "AF00",
+        "name": "No HEPA Filter",
+        "description": "Standard air filter, no air ionizer"
+    },
+    {
+        "slug": "AF02",
+        "name": "HEPA Filter",
+        "description": ""
+    },
+    {
+        "slug": "AH00",
+        "name": "No Accessory Hitch",
+        "description": ""
+    },
+    {
+        "slug": "APE1",
+        "name": "Enhanced Autopilot",
+        "description": ""
+    },
+    {
+        "slug": "APF0",
+        "name": "Autopilot Firmware 2.0 Base",
+        "description": ""
+    },
+    {
+        "slug": "APF1",
+        "name": "Autopilot Firmware 2.0 Enhanced",
+        "description": ""
+    },
+    {
+        "slug": "APF2",
+        "name": "Full Self-Driving Capability",
+        "description": ""
+    },
+    {
+        "slug": "APH0",
+        "name": "Autopilot 2.0 Hardware",
+        "description": ""
+    },
+    {
+        "slug": "APH2",
+        "name": "Autopilot 2.0 Hardware",
+        "description": ""
+    },
+    {
+        "slug": "APBS",
+        "name": "Autopilot",
+        "description": "Model 3 Autopilot"
+    },
+    {
+        "slug": "APF2",
+        "name": "Full Self-Driving Capability",
+        "description": ""
+    },
+    {
+        "slug": "APH3",
+        "name": "Autopilot 2.5 Hardware",
+        "description": ""
+    },
+    {
+        "slug": "APH4",
+        "name": "Autopilot 3.0 Hardware",
+        "description": "Full Self-Driving Computer"
+    },
+    {
+        "slug": "APPA",
+        "name": "Autopilot 1.0 Hardware",
+        "description": ""
+    },
+    {
+        "slug": "APPB",
+        "name": "Enhanced Autopilot",
+        "description": ""
+    },
+    {
+        "slug": "AU00",
+        "name": "No Audio Package",
+        "description": ""
+    },
+    {
+        "slug": "AU01",
+        "name": "Ultra High Fidelity Sound",
+        "description": ""
+    },
+    {
+        "slug": "AU3P",
+        "name": "Sound Studio Package",
+        "description": "Premium audio package"
+    },
+    {
+        "slug": "BC0B",
+        "name": "Black Brake Calipers",
+        "description": ""
+    },
+    {
+        "slug": "BC0R",
+        "name": "Red Brake Calipers",
+        "description": ""
+    },
+    {
+        "slug": "BC3B",
+        "name": "Black Brake Calipers, Model 3",
+        "description": ""
+    },
+    {
+        "slug": "BCMB",
+        "name": "Black Brake Calipers",
+        "description": ""
+    },
+    {
+        "slug": "BCYR",
+        "name": "Performance Brakes",
+        "description": ""
+    },
+    {
+        "slug": "BG30",
+        "name": "No Badge",
+        "description": "Model 3"
+    },
+    {
+        "slug": "BP00",
+        "name": "No Ludicrous",
+        "description": ""
+    },
+    {
+        "slug": "BP01",
+        "name": "Ludicrous Speed Upgrade",
+        "description": ""
+    },
+    {
+        "slug": "BR00",
+        "name": "No Battery Firmware Limit",
+        "description": ""
+    },
+    {
+        "slug": "BR03",
+        "name": "Battery Firmware Limit (60kWh)",
+        "description": ""
+    },
+    {
+        "slug": "BR05",
+        "name": "Battery Firmware Limit (75kWh)",
+        "description": ""
+    },
+    {
+        "slug": "BS00",
+        "name": "Blind Spot Sensor Package",
+        "description": ""
+    },
+    {
+        "slug": "BS01",
+        "name": "Special Production Flag",
+        "description": ""
+    },
+    {
+        "slug": "BT37",
+        "name": "75 kWh (Model 3)",
+        "description": ""
+    },
+    {
+        "slug": "BT40",
+        "name": "40 kWh",
+        "description": ""
+    },
+    {
+        "slug": "BT60",
+        "name": "60 kWh",
+        "description": ""
+    },
+    {
+        "slug": "BT70",
+        "name": "70 kWh",
+        "description": ""
+    },
+    {
+        "slug": "BT85",
+        "name": "85 kWh",
+        "description": ""
+    },
+    {
+        "slug": "BTX4",
+        "name": "90 kWh",
+        "description": ""
+    },
+    {
+        "slug": "BTX5",
+        "name": "75 kWh",
+        "description": ""
+    },
+    {
+        "slug": "BTX6",
+        "name": "100 kWh",
+        "description": ""
+    },
+    {
+        "slug": "BTX7",
+        "name": "75 kWh",
+        "description": ""
+    },
+    {
+        "slug": "BTX8",
+        "name": "85 kWh",
+        "description": ""
+    },
+    {
+        "slug": "CC01",
+        "name": "Five Seat Interior",
+        "description": ""
+    },
+    {
+        "slug": "CC02",
+        "name": "Six Seat Interior",
+        "description": ""
+    },
+    {
+        "slug": "CC04",
+        "name": "Seven Seat Interior",
+        "description": ""
+    },
+    {
+        "slug": "CC12",
+        "name": "Six Seat Interior with Center Console",
+        "description": ""
+    },
+    {
+        "slug": "CDM0",
+        "name": "No CHAdeMO Charging Adaptor",
+        "description": ""
+    },
+    {
+        "slug": "CF00",
+        "name": "High Power Charger",
+        "description": ""
+    },
+    {
+        "slug": "CF01",
+        "name": "48amp charger",
+        "description": ""
+    },
+    {
+        "slug": "CH00",
+        "name": "Standard Charger (40 Amp)",
+        "description": ""
+    },
+    {
+        "slug": "CH01",
+        "name": "Dual Chargers (80 Amp)",
+        "description": "Twin 10kW charge config"
+    },
+    {
+        "slug": "CH04",
+        "name": "72 Amp Charger (Model S/X)",
+        "description": ""
+    },
+    {
+        "slug": "CH05",
+        "name": "48 Amp Charger (Model S/X)",
+        "description": ""
+    },
+    {
+        "slug": "CH07",
+        "name": "48 Amp Charger (Model 3)",
+        "description": ""
+    },
+    {
+        "slug": "COL0",
+        "name": "Signature",
+        "description": ""
+    },
+    {
+        "slug": "COL1",
+        "name": "Solid",
+        "description": ""
+    },
+    {
+        "slug": "COL2",
+        "name": "Metallic",
+        "description": ""
+    },
+    {
+        "slug": "COL3",
+        "name": "Tesla Multi-Coat",
+        "description": ""
+    },
+    {
+        "slug": "COUS",
+        "name": "Country: United States",
+        "description": ""
+    },
+    {
+        "slug": "CONL",
+        "name": "Country: Netherlands",
+        "description": ""
+    },
+    {
+        "slug": "CPW1",
+        "name": "20\" Performance Wheels",
+        "description": ""
+    },
+    {
+        "slug": "CW00",
+        "name": "Weather Package",
+        "description": "No Cold Weather Package"
+    },
+    {
+        "slug": "CW02",
+        "name": "Weather Package",
+        "description": "Subzero Weather Package"
+    },
+    {
+        "slug": "DA00",
+        "name": "No Autopilot",
+        "description": ""
+    },
+    {
+        "slug": "DA01",
+        "name": "Active Safety (ACC,LDW,SA)",
+        "description": "Drivers Assistance Package"
+    },
+    {
+        "slug": "DA02",
+        "name": "Autopilot Convenience Features",
+        "description": ""
+    },
+    {
+        "slug": "DCF0",
+        "name": "Autopilot Convenience Features (DCF0)",
+        "description": ""
+    },
+    {
+        "slug": "DRLH",
+        "name": "Left Hand Drive",
+        "description": ""
+    },
+    {
+        "slug": "BC3R",
+        "name": "Performance Brakes",
+        "description": "Model 3"
+    },
+    {
+        "slug": "DRRH",
+        "name": "Right Hand Drive",
+        "description": ""
+    },
+    {
+        "slug": "DSH5",
+        "name": "Dashboard",
+        "description": "PUR Dashboard Pad"
+    },
+    {
+        "slug": "DSH7",
+        "name": "Alcantara Dashboard Accents",
+        "description": ""
+    },
+    {
+        "slug": "DSHG",
+        "name": "PUR Dash Pad",
+        "description": ""
+    },
+    {
+        "slug": "DU00",
+        "name": "Drive Unit - IR",
+        "description": ""
+    },
+    {
+        "slug": "DU01",
+        "name": "Drive Unit - Infineon",
+        "description": ""
+    },
+    {
+        "slug": "DV2W",
+        "name": "Rear-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "DV4W",
+        "name": "All-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "FC3P",
+        "name": "Front Console Front Console (Premium)",
+        "description": "Model 3"
+    },
+    {
+        "slug": "FG00",
+        "name": "No Exterior Lighting Package",
+        "description": ""
+    },
+    {
+        "slug": "FG01",
+        "name": "Fog Lamps",
+        "description": "Exterior Lighting Package"
+    },
+    {
+        "slug": "FG02",
+        "name": "Fog Lamps",
+        "description": "Fog Lamps"
+    },
+    {
+        "slug": "FG31",
+        "name": "Fog Lamps",
+        "description": "Premium Fog Lights (Model 3)"
+    },
+    {
+        "slug": "FM3B",
+        "name": "Performance Package (Model 3)",
+        "description": ""
+    },
+    {
+        "slug": "FMP6",
+        "name": "FMP6",
+        "description": ""
+    },
+    {
+        "slug": "FR01",
+        "name": "Base Front Row",
+        "description": ""
+    },
+    {
+        "slug": "FR02",
+        "name": "Ventilated Front Seats",
+        "description": ""
+    },
+    {
+        "slug": "FR03",
+        "name": "FR03",
+        "description": ""
+    },
+    {
+        "slug": "FR04",
+        "name": "FR04",
+        "description": ""
+    },
+    {
+        "slug": "GLFR",
+        "name": "Assembly",
+        "description": "Final Assembly Fremont"
+    },
+    {
+        "slug": "HC00",
+        "name": "No Home Charging installation",
+        "description": ""
+    },
+    {
+        "slug": "HC01",
+        "name": "Home Charging Installation",
+        "description": ""
+    },
+    {
+        "slug": "HM31",
+        "name": "Teck Package - Homelink",
+        "description": "Homelink"
+    },
+    {
+        "slug": "HL31",
+        "name": "Head Lamp (Model 3)",
+        "description": "Uplevel Headlamps"
+    },
+    {
+        "slug": "HP00",
+        "name": "No HPWC Ordered",
+        "description": ""
+    },
+    {
+        "slug": "HP01",
+        "name": "HPWC Ordered",
+        "description": ""
+    },
+    {
+        "slug": "ID3W",
+        "name": "(Model 3) Wood Decor",
+        "description": ""
+    },
+    {
+        "slug": "IDBA",
+        "name": "Dark Ash Wood Decor",
+        "description": ""
+    },
+    {
+        "slug": "IDBO",
+        "name": "Figured Ash Wood Decor",
+        "description": ""
+    },
+    {
+        "slug": "IDCF",
+        "name": "Carbon Fiber Decor",
+        "description": ""
+    },
+    {
+        "slug": "IDOK",
+        "name": "Oak Decor",
+        "description": ""
+    },
+    {
+        "slug": "IDOM",
+        "name": "Matte Obeche Wood Decor",
+        "description": ""
+    },
+    {
+        "slug": "IDOG",
+        "name": "Gloss Obeche Wood Decor",
+        "description": ""
+    },
+    {
+        "slug": "IDLW",
+        "name": "Lacewood Decor",
+        "description": ""
+    },
+    {
+        "slug": "IDPB",
+        "name": "Piano Black Decor",
+        "description": ""
+    },
+    {
+        "slug": "IN3BB",
+        "name": "All Black Partial Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "IN3PB",
+        "name": "All Black Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "INBBW",
+        "name": "White",
+        "description": ""
+    },
+    {
+        "slug": "INBFP",
+        "name": "Classic Black",
+        "description": ""
+    },
+    {
+        "slug": "INBPP",
+        "name": "Black",
+        "description": ""
+    },
+    {
+        "slug": "INBTB",
+        "name": "Multi-Pattern Black",
+        "description": ""
+    },
+    {
+        "slug": "INFBP",
+        "name": "Black Premium",
+        "description": ""
+    },
+    {
+        "slug": "INLPC",
+        "name": "Cream",
+        "description": ""
+    },
+    {
+        "slug": "INLPP",
+        "name": "Black / Light Headliner",
+        "description": ""
+    },
+    {
+        "slug": "INWPT",
+        "name": "Tan Interior",
+        "description": ""
+    },
+    {
+        "slug": "INYPB",
+        "name": "All Black Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "INYPW",
+        "name": "Black and White Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "IL31",
+        "name": "Interior Ambient Lighting",
+        "description": ""
+    },
+    {
+        "slug": "IVBPP",
+        "name": "All Black Interior",
+        "description": ""
+    },
+    {
+        "slug": "IVBSW",
+        "name": "Ultra White Interior",
+        "description": ""
+    },
+    {
+        "slug": "IVBTB",
+        "name": "All Black Interior",
+        "description": ""
+    },
+    {
+        "slug": "IVLPC",
+        "name": "Vegan Cream",
+        "description": ""
+    },
+    {
+        "slug": "IX00",
+        "name": "No Extended Nappa Leather Trim",
+        "description": ""
+    },
+    {
+        "slug": "IX01",
+        "name": "Extended Nappa Leather Trim",
+        "description": ""
+    },
+    {
+        "slug": "LLP1",
+        "name": "LLP1",
+        "description": ""
+    },
+    {
+        "slug": "LLP2",
+        "name": "LLP2",
+        "description": ""
+    },
+    {
+        "slug": "LP00",
+        "name": "Lighting Package",
+        "description": "No Lighting Package"
+    },
+    {
+        "slug": "LP01",
+        "name": "Lighting Package",
+        "description": "Premium Interior Lighting"
+    },
+    {
+        "slug": "LT00",
+        "name": "Vegan interior",
+        "description": ""
+    },
+    {
+        "slug": "LT01",
+        "name": "Standard interior",
+        "description": ""
+    },
+    {
+        "slug": "LT1B",
+        "name": "Lower Trim",
+        "description": "Lower Trim"
+    },
+    {
+        "slug": "LT3W",
+        "name": "LT3W",
+        "description": ""
+    },
+    {
+        "slug": "LT4B",
+        "name": "LT4B",
+        "description": ""
+    },
+    {
+        "slug": "LT4C",
+        "name": "LT4C",
+        "description": ""
+    },
+    {
+        "slug": "LT4W",
+        "name": "LT4W",
+        "description": ""
+    },
+    {
+        "slug": "LT5C",
+        "name": "LT5C",
+        "description": ""
+    },
+    {
+        "slug": "LT5P",
+        "name": "LT5P",
+        "description": ""
+    },
+    {
+        "slug": "LT6P",
+        "name": "LT6P",
+        "description": ""
+    },
+    {
+        "slug": "LT6W",
+        "name": "White Base Lower Trim",
+        "description": ""
+    },
+    {
+        "slug": "LTPB",
+        "name": "Lower Trim PUR Black",
+        "description": ""
+    },
+    {
+        "slug": "ME01",
+        "name": "Memory Seats",
+        "description": ""
+    },
+    {
+        "slug": "ME02",
+        "name": "Seat Memory",
+        "description": "Seat Memory LHD Driver"
+    },
+    {
+        "slug": "MI00",
+        "name": "2015 Production Refresh",
+        "description": ""
+    },
+    {
+        "slug": "MI00",
+        "name": "Project/Program Code M3",
+        "description": "Base Manufacturing Intro Code"
+    },
+    {
+        "slug": "MI01",
+        "name": "2016 Production Refresh",
+        "description": ""
+    },
+    {
+        "slug": "MI02",
+        "name": "2017 Production Refresh",
+        "description": ""
+    },
+    {
+        "slug": "MI03",
+        "name": "201? Production Refresh",
+        "description": "Found on Model X ordered 11/2018 delivered 3/2019"
+    },
+    {
+        "slug": "MR31",
+        "name": "Tech Package - Mirror -YES",
+        "description": "Uplevel Mirrors"
+    },
+    {
+        "slug": "MT300",
+        "name": "Standard Range Rear-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "MT301",
+        "name": "Standard Range Plus Rear-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "MT302",
+        "name": "Long Range Rear-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "MT303",
+        "name": "Long Range All-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "MT304",
+        "name": "Long Range All-Wheel Drive Performance",
+        "description": ""
+    },
+    {
+        "slug": "MT305",
+        "name": "Mid Range Rear-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "MTY02",
+        "name": "Long Range Rear-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "MTY03",
+        "name": "Long Range All-Wheel Drive",
+        "description": ""
+    },
+    {
+        "slug": "MTY04",
+        "name": "Long Range All-Wheel Drive Performance",
+        "description": ""
+    },
+    {
+        "slug": "OSSB",
+        "name": "Safety CA Black",
+        "description": ""
+    },
+    {
+        "slug": "OSSW",
+        "name": "Safety CA White",
+        "description": ""
+    },
+    {
+        "slug": "PA00",
+        "name": "No Paint Armor",
+        "description": ""
+    },
+    {
+        "slug": "PBCW",
+        "name": "Solid White Color",
+        "description": ""
+    },
+    {
+        "slug": "PBSB",
+        "name": "Solid Black Color",
+        "description": ""
+    },
+    {
+        "slug": "PBT8",
+        "name": "Performance 85kWh",
+        "description": ""
+    },
+    {
+        "slug": "PC30",
+        "name": "No Performance Chassis",
+        "description": ""
+    },
+    {
+        "slug": "PC31",
+        "name": "Performance Chassis",
+        "description": ""
+    },
+    {
+        "slug": "PF00",
+        "name": "No Performance Legacy Package",
+        "description": ""
+    },
+    {
+        "slug": "PF01",
+        "name": "Performance Legacy Package",
+        "description": ""
+    },
+    {
+        "slug": "PI00",
+        "name": "No Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "PI01",
+        "name": "Premium Upgrades Package",
+        "description": ""
+    },
+    {
+        "slug": "PK00",
+        "name": "Parking Sensors",
+        "description": ""
+    },
+    {
+        "slug": "PMAB",
+        "name": "Anza Brown Metallic Color",
+        "description": ""
+    },
+    {
+        "slug": "PMBL",
+        "name": "Obsidian Black Multi-Coat Color",
+        "description": ""
+    },
+    {
+        "slug": "PMMB",
+        "name": "Monterey Blue Metallic Color",
+        "description": ""
+    },
+    {
+        "slug": "PMMR",
+        "name": "Red Multi-Coat Color",
+        "description": ""
+    },
+    {
+        "slug": "PMNG",
+        "name": "Midnight Silver Metallic Color",
+        "description": ""
+    },
+    {
+        "slug": "PMSG",
+        "name": "Green Metallic Color",
+        "description": ""
+    },
+    {
+        "slug": "PMSS",
+        "name": "San Simeon Silver Metallic Color",
+        "description": ""
+    },
+    {
+        "slug": "PMTG",
+        "name": "Dolphin Grey Metallic Color",
+        "description": ""
+    },
+    {
+        "slug": "PPMR",
+        "name": "Red Multi-Coat Color",
+        "description": ""
+    },
+    {
+        "slug": "PPSB",
+        "name": "Deep Blue Metallic Color",
+        "description": ""
+    },
+    {
+        "slug": "PPSR",
+        "name": "Signature Red Color",
+        "description": ""
+    },
+    {
+        "slug": "PPSW",
+        "name": "Pearl White Multi-Coat Color",
+        "description": ""
+    },
+    {
+        "slug": "PPTI",
+        "name": "Titanium Metallic Color",
+        "description": ""
+    },
+    {
+        "slug": "PL30",
+        "name": "No Aluminum Pedal",
+        "description": ""
+    },
+    {
+        "slug": "PL31",
+        "name": "Performance Pedals",
+        "description": "Model 3"
+    },
+    {
+        "slug": "PRM30",
+        "name": "Partial Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "PRM31",
+        "name": "Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "PRM3S",
+        "name": "Standard Interior",
+        "description": ""
+    },
+    {
+        "slug": "PRMY1",
+        "name": "Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "PS00",
+        "name": "No Parcel Shelf",
+        "description": ""
+    },
+    {
+        "slug": "PS01",
+        "name": "Parcel Shelf",
+        "description": ""
+    },
+    {
+        "slug": "RS3H",
+        "name": "Second Row Seat Rear Seats (Heated)",
+        "description": "Model 3"
+    },
+    {
+        "slug": "PX00",
+        "name": "No Performance Plus Package",
+        "description": ""
+    },
+    {
+        "slug": "PX01",
+        "name": "Performance Plus",
+        "description": ""
+    },
+    {
+        "slug": "PX6D",
+        "name": "Zero to 60 in 2.5 sec",
+        "description": ""
+    },
+    {
+        "slug": "P85D",
+        "name": "P85D",
+        "description": ""
+    },
+    {
+        "slug": "QLBS",
+        "name": "Black Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QLFC",
+        "name": "Cream Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QLFP",
+        "name": "Black Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QLFW",
+        "name": "White Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QLWS",
+        "name": "White Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QNET",
+        "name": "Tan NextGen",
+        "description": ""
+    },
+    {
+        "slug": "QPBT",
+        "name": "Black Textile Interior",
+        "description": ""
+    },
+    {
+        "slug": "QPMP",
+        "name": "Black seats",
+        "description": ""
+    },
+    {
+        "slug": "QTBS",
+        "name": "Black Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QTBW",
+        "name": "White Premium Seats",
+        "description": ""
+    },
+    {
+        "slug": "QTFC",
+        "name": "Cream Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QTFP",
+        "name": "Black Premium Seats",
+        "description": ""
+    },
+    {
+        "slug": "QTFW",
+        "name": "White Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QTPC",
+        "name": "Cream Premium Seats",
+        "description": ""
+    },
+    {
+        "slug": "QTPP",
+        "name": "Black Premium Seats",
+        "description": ""
+    },
+    {
+        "slug": "QTPT",
+        "name": "Tan Premium Seats",
+        "description": ""
+    },
+    {
+        "slug": "QTTB",
+        "name": "Multi-Pattern Black Seats",
+        "description": ""
+    },
+    {
+        "slug": "QTWS",
+        "name": "White Premium Interior",
+        "description": ""
+    },
+    {
+        "slug": "QVBM",
+        "name": "Multi-Pattern Black Seats",
+        "description": ""
+    },
+    {
+        "slug": "QVPC",
+        "name": "Vegan Cream Seats",
+        "description": ""
+    },
+    {
+        "slug": "QVPP",
+        "name": "Vegan Cream Seats",
+        "description": ""
+    },
+    {
+        "slug": "QVSW",
+        "name": "White Tesla Seats",
+        "description": ""
+    },
+    {
+        "slug": "RCX0",
+        "name": "No Rear Console",
+        "description": ""
+    },
+    {
+        "slug": "RCX1",
+        "name": "Rear Console",
+        "description": ""
+    },
+    {
+        "slug": "RF3G",
+        "name": "Model 3 Glass Roof",
+        "description": ""
+    },
+    {
+        "slug": "RFBK",
+        "name": "Black Roof",
+        "description": ""
+    },
+    {
+        "slug": "RFBC",
+        "name": "Body Color Roof",
+        "description": "Roof"
+    },
+    {
+        "slug": "RFFG",
+        "name": "Glass Roof",
+        "description": ""
+    },
+    {
+        "slug": "RFP0",
+        "name": "All Glass Panoramic Roof",
+        "description": ""
+    },
+    {
+        "slug": "RFP2",
+        "name": "Sunroof",
+        "description": ""
+    },
+    {
+        "slug": "RFPX",
+        "name": "Model X Roof",
+        "description": ""
+    },
+    {
+        "slug": "S01B",
+        "name": "Black Textile Seats",
+        "description": ""
+    },
+    {
+        "slug": "S02B",
+        "name": "Seat",
+        "description": "BLK Leather"
+    },
+    {
+        "slug": "S02P",
+        "name": "S02P",
+        "description": ""
+    },
+    {
+        "slug": "S07W",
+        "name": "White Seats",
+        "description": ""
+    },
+    {
+        "slug": "S31B",
+        "name": "S31B",
+        "description": ""
+    },
+    {
+        "slug": "S32C",
+        "name": "S32C",
+        "description": ""
+    },
+    {
+        "slug": "S32P",
+        "name": "S32P",
+        "description": ""
+    },
+    {
+        "slug": "S32W",
+        "name": "S32W",
+        "description": ""
+    },
+    {
+        "slug": "S3PB",
+        "name": "Seat Black PUR Premium Seats",
+        "description": ""
+    },
+    {
+        "slug": "SC00",
+        "name": "No Supercharging",
+        "description": ""
+    },
+    {
+        "slug": "SC01",
+        "name": "Supercharging Enabled",
+        "description": ""
+    },
+    {
+        "slug": "SC04",
+        "name": "Pay Per Use Supercharging",
+        "description": ""
+    },
+    {
+        "slug": "SC05",
+        "name": "Free Supercharging",
+        "description": ""
+    },
+    {
+        "slug": "SLR0",
+        "name": "No Rear Spoiler",
+        "description": ""
+    },
+    {
+        "slug": "SP00",
+        "name": "No Security Package",
+        "description": ""
+    },
+    {
+        "slug": "SR01",
+        "name": "Standard 2nd row",
+        "description": "Second Row Seat"
+    },
+    {
+        "slug": "SR06",
+        "name": "Seven Seat Interior",
+        "description": ""
+    },
+    {
+        "slug": "SR07",
+        "name": "Standard 2nd row",
+        "description": ""
+    },
+    {
+        "slug": "ST00",
+        "name": "Non-leather Steering Wheel",
+        "description": ""
+    },
+    {
+        "slug": "ST01",
+        "name": "Non-heated Leather Steering Wheel",
+        "description": ""
+    },
+    {
+        "slug": "ST31",
+        "name": "Steering Wheel",
+        "description": "Premium Steering Wheel"
+    },
+    {
+        "slug": "STCP",
+        "name": "Steering Wheel",
+        "description": "Steering Column (Power)"
+    },
+    {
+        "slug": "STY5S",
+        "name": "Five Seat Interior",
+        "description": ""
+    },
+    {
+        "slug": "STY7S",
+        "name": "Seven Seat Interior",
+        "description": ""
+    },
+    {
+        "slug": "SU00",
+        "name": "Standard Suspension",
+        "description": ""
+    },
+    {
+        "slug": "SU01",
+        "name": "Smart Air Suspension",
+        "description": ""
+    },
+    {
+        "slug": "SU3C",
+        "name": "Suspension",
+        "description": "Coil spring suspension"
+    },
+    {
+        "slug": "T3MA",
+        "name": "Tires M3",
+        "description": "18 Michelin All Season, Square"
+    },
+    {
+        "slug": "TIC4",
+        "name": "Tires",
+        "description": "All-Season Tires"
+    },
+    {
+        "slug": "TIG2",
+        "name": "Summer Tires",
+        "description": ""
+    },
+    {
+        "slug": "TIM7",
+        "name": "Summer Tires",
+        "description": ""
+    },
+    {
+        "slug": "TIMP",
+        "name": "Tires",
+        "description": "Michelin Primacy 19\" Tire"
+    },
+    {
+        "slug": "TIP0",
+        "name": "All-season Tires",
+        "description": ""
+    },
+    {
+        "slug": "TM00",
+        "name": "Model Trim",
+        "description": "General Production Series Vehicle"
+    },
+    {
+        "slug": "TM02",
+        "name": "General Production Signature Trim",
+        "description": ""
+    },
+    {
+        "slug": "TM0A",
+        "name": "ALPHA PRE-PRODUCTION NON-SALEABLE",
+        "description": ""
+    },
+    {
+        "slug": "TM0B",
+        "name": "BETA PRE-PRODUCTION NON-SALEABLE",
+        "description": ""
+    },
+    {
+        "slug": "TM0C",
+        "name": "PRE-PRODUCTION SALEABLE",
+        "description": ""
+    },
+    {
+        "slug": "TP01",
+        "name": "Tech Package - No Autopilot",
+        "description": ""
+    },
+    {
+        "slug": "TP02",
+        "name": "Tech Package with Autopilot",
+        "description": ""
+    },
+    {
+        "slug": "TP03",
+        "name": "Tech Package with Enhanced Autopilot",
+        "description": ""
+    },
+    {
+        "slug": "TR00",
+        "name": "No Rear Facing Seats",
+        "description": ""
+    },
+    {
+        "slug": "TR01",
+        "name": "Third Row Seating",
+        "description": ""
+    },
+    {
+        "slug": "TRA1",
+        "name": "Third Row HVAC",
+        "description": ""
+    },
+    {
+        "slug": "TW00",
+        "name": "No Tow Package",
+        "description": ""
+    },
+    {
+        "slug": "TW01",
+        "name": "Tow Package",
+        "description": ""
+    },
+    {
+        "slug": "UM01",
+        "name": "Universal Mobile Charger - US Port (Single)",
+        "description": ""
+    },
+    {
+        "slug": "UT3P",
+        "name": "Suede Grey Premium Headliner",
+        "description": ""
+    },
+    {
+        "slug": "UTAB",
+        "name": "Black Alcantara Headliner",
+        "description": ""
+    },
+    {
+        "slug": "UTAW",
+        "name": "Light Headliner",
+        "description": ""
+    },
+    {
+        "slug": "UTMF",
+        "name": "Headliner",
+        "description": ""
+    },
+    {
+        "slug": "UTPB",
+        "name": "Dark Headliner",
+        "description": ""
+    },
+    {
+        "slug": "UTSB",
+        "name": "Dark Headliner",
+        "description": ""
+    },
+    {
+        "slug": "UTZW",
+        "name": "Light Headliner",
+        "description": ""
+    },
+    {
+        "slug": "USSB",
+        "name": "Safety",
+        "description": "Safety US Black"
+    },
+    {
+        "slug": "USSW",
+        "name": "US Safety Kit White",
+        "description": ""
+    },
+    {
+        "slug": "SLR1",
+        "name": "Carbon Fibre Spoiler",
+        "description": "Model 3"
+    },
+    {
+        "slug": "SPT31",
+        "name": "Performance Upgrade",
+        "description": "Model 3"
+    },
+    {
+        "slug": "SPTY1",
+        "name": "Performance Upgrade",
+        "description": "Model Y"
+    },
+    {
+        "slug": "W32P",
+        "name": "20\" Performance Wheels",
+        "description": "Model 3"
+    },
+    {
+        "slug": "W32D",
+        "name": "20\" Gray Performance Wheels",
+        "description": "Model 3"
+    },
+    {
+        "slug": "W38B",
+        "name": "18\" Aero Wheels",
+        "description": "For the Model 3 and Model Y"
+    },
+    {
+        "slug": "W39B",
+        "name": "19\" Sport Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WR00",
+        "name": "No Wrap",
+        "description": ""
+    },
+    {
+        "slug": "WT19",
+        "name": "19\" Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WT20",
+        "name": "20\" Silver Slipstream Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WT22",
+        "name": "22\" Silver Turbine Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTAB",
+        "name": "21\" Black Arachnid Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTAS",
+        "name": "19\" Silver Slipstream Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTDS",
+        "name": "19\" Grey Slipstream Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTNN",
+        "name": "20\" Nokian Winter Tires (non-studded)",
+        "description": ""
+    },
+    {
+        "slug": "WTNS",
+        "name": "20\" Nokian Winter Tires (studded)",
+        "description": ""
+    },
+    {
+        "slug": "WTP2",
+        "name": "20\" Pirelli Winter Tires",
+        "description": ""
+    },
+    {
+        "slug": "WTSC",
+        "name": "20\" Sonic Carbon Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTSG",
+        "name": "21\" Turbine Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTSP",
+        "name": "21\" Turbine Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTSS",
+        "name": "21\" Turbine Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTTB",
+        "name": "19\" Cyclone Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTTC",
+        "name": "21\" Sonic Carbon Twin Turbine Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTUT",
+        "name": "22\" Onyx Black Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WTW2",
+        "name": "19\" Nokian Winter Wheel Set",
+        "description": ""
+    },
+    {
+        "slug": "WTW3",
+        "name": "19\" Pirelli Winter Wheel Set",
+        "description": ""
+    },
+    {
+        "slug": "WTW4",
+        "name": "19\" Winter Tire Set",
+        "description": ""
+    },
+    {
+        "slug": "WTW5",
+        "name": "21\" Winter Tire Set",
+        "description": ""
+    },
+    {
+        "slug": "WTW6",
+        "name": "19\" Nokian Winter Tires (studded)",
+        "description": ""
+    },
+    {
+        "slug": "WTW7",
+        "name": "19\" Nokian Winter Tires (non-studded)",
+        "description": ""
+    },
+    {
+        "slug": "WTW8",
+        "name": "19\" Pirelli Winter Tires",
+        "description": ""
+    },
+    {
+        "slug": "WTX1",
+        "name": "19\" Michelin Primacy Tire Upgrade",
+        "description": ""
+    },
+    {
+        "slug": "WXNN",
+        "name": "No 20\" Nokian Winter Tires (non-studded)",
+        "description": ""
+    },
+    {
+        "slug": "WXNS",
+        "name": "No 20\" Nokian Winter Tires (studded)",
+        "description": ""
+    },
+    {
+        "slug": "WXP2",
+        "name": "No 20\" Pirelli Winter Tires",
+        "description": ""
+    },
+    {
+        "slug": "WXW2",
+        "name": "No 19\" Wheels with Nokian Winter Tyres",
+        "description": ""
+    },
+    {
+        "slug": "WXW3",
+        "name": "No 19\" Wheels with Pirelli Winter Tyres",
+        "description": ""
+    },
+    {
+        "slug": "WXW4",
+        "name": "No 19\" Winter Tire Set",
+        "description": ""
+    },
+    {
+        "slug": "WXW5",
+        "name": "No 21\" Winter Tire Set",
+        "description": ""
+    },
+    {
+        "slug": "WXW6",
+        "name": "No 19\" Nokian Winter Tires (studded)",
+        "description": ""
+    },
+    {
+        "slug": "WXW7",
+        "name": "No 19\" Nokian Winter Tires (non-studded)",
+        "description": ""
+    },
+    {
+        "slug": "WXW8",
+        "name": "No 19\" Pirelli Winter Tires",
+        "description": ""
+    },
+    {
+        "slug": "WY18B",
+        "name": "18\" Aero Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WY19B",
+        "name": "19\" Sport Wheels",
+        "description": ""
+    },
+    {
+        "slug": "WY20P",
+        "name": "20\" Performance Wheels",
+        "description": ""
+    },
+    {
+        "slug": "X001",
+        "name": "Override: Power Liftgate",
+        "description": ""
+    },
+    {
+        "slug": "X003",
+        "name": "Maps & Navigation",
+        "description": ""
+    },
+    {
+        "slug": "X004",
+        "name": "Override: No Navigation",
+        "description": ""
+    },
+    {
+        "slug": "X007",
+        "name": "Daytime running lights",
+        "description": ""
+    },
+    {
+        "slug": "X010",
+        "name": "Base Mirrors",
+        "description": ""
+    },
+    {
+        "slug": "X011",
+        "name": "Override: Homelink",
+        "description": ""
+    },
+    {
+        "slug": "X012",
+        "name": "Override: No Homelink",
+        "description": ""
+    },
+    {
+        "slug": "X013",
+        "name": "Override: Satellite Radio",
+        "description": ""
+    },
+    {
+        "slug": "X014",
+        "name": "Override: No Satellite Radio",
+        "description": ""
+    },
+    {
+        "slug": "X019",
+        "name": "Carbon Fiber Spoiler",
+        "description": ""
+    },
+    {
+        "slug": "X020",
+        "name": "No Performance Exterior",
+        "description": ""
+    },
+    {
+        "slug": "X021",
+        "name": "No Rear Carbon Fiber Spoiler",
+        "description": ""
+    },
+    {
+        "slug": "X024",
+        "name": "Performance Package",
+        "description": ""
+    },
+    {
+        "slug": "X025",
+        "name": "Performance Powertrain",
+        "description": ""
+    },
+    {
+        "slug": "X027",
+        "name": "Lighted Door Handles",
+        "description": "Light handle"
+    },
+    {
+        "slug": "X028",
+        "name": "Battery Badge",
+        "description": "Normal Badging"
+    },
+    {
+        "slug": "X029",
+        "name": "Remove Battery Badge",
+        "description": ""
+    },
+    {
+        "slug": "X030",
+        "name": "Override: No Passive Entry Pkg",
+        "description": ""
+    },
+    {
+        "slug": "X031",
+        "name": "Keyless Entry",
+        "description": "Passive Entry Pkg"
+    },
+    {
+        "slug": "X037",
+        "name": "Powerfolding Mirrors",
+        "description": ""
+    },
+    {
+        "slug": "X039",
+        "name": "DAB Radio",
+        "description": ""
+    },
+    {
+        "slug": "X040",
+        "name": "No DAB Radio",
+        "description": ""
+    },
+    {
+        "slug": "X041",
+        "name": "No Auto Presenting Door",
+        "description": ""
+    },
+    {
+        "slug": "X042",
+        "name": "Auto Presenting Door",
+        "description": ""
+    },
+    {
+        "slug": "X043",
+        "name": "No Phone Dock Kit",
+        "description": ""
+    },
+    {
+        "slug": "X044",
+        "name": "Phone Dock Kit",
+        "description": ""
+    },
+    {
+        "slug": "YF00",
+        "name": "No Yacht Floor",
+        "description": ""
+    },
+    {
+        "slug": "YF01",
+        "name": "Matching Yacht Floor",
+        "description": ""
+    },
+    {
+        "slug": "YFCC",
+        "name": "YFCC",
+        "description": ""
+    },
+    {
+        "slug": "YFFC",
+        "name": "Integrated Center Console",
+        "description": ""
+    }
+]

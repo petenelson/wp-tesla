@@ -1,0 +1,16 @@
+{
+    "response": {
+        "gps_as_of": 1590098617,
+        "heading": 299,
+        "latitude": 30.300233,
+        "longitude": -97.707582,
+        "native_latitude": 30.300233,
+        "native_location_supported": 1,
+        "native_longitude": -97.707582,
+        "native_type": "wgs",
+        "power": 0,
+        "shift_state": null,
+        "speed": null,
+        "timestamp": 1590098959415
+    }
+}

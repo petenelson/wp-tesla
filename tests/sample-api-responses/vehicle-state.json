@@ -1,0 +1,50 @@
+{
+    "response": {
+        "api_version": 7,
+        "autopark_state_v3": "unavailable",
+        "calendar_supported": true,
+        "car_version": "2020.12.11.1 81280b81af0a",
+        "center_display_state": 0,
+        "df": 0,
+        "dr": 0,
+        "fd_window": 0,
+        "fp_window": 0,
+        "ft": 0,
+        "is_user_present": false,
+        "locked": true,
+        "media_state": {
+            "remote_control_enabled": true
+        },
+        "notifications_supported": true,
+        "odometer": 1735.059833,
+        "parsed_calendar_supported": true,
+        "pf": 0,
+        "pr": 0,
+        "rd_window": 0,
+        "remote_start": false,
+        "remote_start_enabled": true,
+        "remote_start_supported": true,
+        "rp_window": 0,
+        "rt": 0,
+        "sentry_mode": false,
+        "sentry_mode_available": true,
+        "software_update": {
+            "download_perc": 0,
+            "expected_duration_sec": 2700,
+            "install_perc": 1,
+            "status": "",
+            "version": ""
+        },
+        "speed_limit_mode": {
+            "active": false,
+            "current_limit_mph": 85.0,
+            "max_limit_mph": 90,
+            "min_limit_mph": 50,
+            "pin_code_set": false
+        },
+        "timestamp": 1590098978940,
+        "valet_mode": false,
+        "valet_pin_needed": true,
+        "vehicle_name": "Sulaco"
+    }
+}

@@ -9,6 +9,7 @@ namespace WPTesla\Vehicle;
 
 use \WPTesla\API;
 use \WPTesla\PostTypes\Tesla;
+use \WPTesla\Taxonomies\OptionCode;
 
 /**
  * Set up theme defaults and register supported WordPress features.
@@ -52,7 +53,7 @@ function get_existing_vehicle( $vehicle_id, $user_id ) {
  *
  * @param string $vehicle_id   The Tesla vehicle ID.
  * @param int    $user_id      The WP user ID.
- * @param array  $vehicle_data The vehicle data.
+ * @param array  $vehicle_data The vehicle data from the API.
  *
  * @return WP_Post
  */
@@ -64,8 +65,11 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
 			'display_name' => '',
 			'vin'          => '',
 			'state'        => '',
+			'option_codes' => '',
 		]
 	);
+
+	$vehicle_data['option_codes'] = explode( ',', $vehicle_data['option_codes'] );
 
 	$vehicle = get_existing_vehicle( $vehicle_id, $user_id );
 
@@ -90,7 +94,7 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
 		$vehicle = get_post( $post_id );
 	}
 
-	if ( ! empty( $vehicle ) && $vehicle_data['display_name'] !== $vehicle->post_title ) {
+	if ( ! empty( $vehicle ) ) {
 
 		$postarr = [
 			'ID'          => $vehicle->ID,
@@ -99,6 +103,17 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
 		];
 
 		wp_update_post( $postarr );
+
+		$option_code_ids = [];
+
+		foreach ( $vehicle_data['option_codes'] as $slug ) {
+			$term = OptionCode\get_option_code( $slug );
+			if ( ! empty( $term ) ) {
+				$option_code_ids[] = $term->term_id;
+			}
+		}
+
+		wp_set_post_terms( $vehicle->ID, $option_code_ids, OptionCode\get_taxonomy_name(), false );
 
 		$vehicle = get_post( $vehicle->ID );
 	}

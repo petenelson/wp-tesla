@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom post types for this plugin.
+ * Vehicle post type for this plugin.
  *
  * @package WP Tesla
  */
@@ -27,7 +27,7 @@ function setup() {
  * @return string
  */
 function get_post_type_name() {
-	return apply_filters( __FUNCTION__, 'wp-tesla' );
+	return apply_filters( 'wp_tesla_get_vehicle_post_type_name', 'wp-tesla' );
 }
 
 /**
@@ -51,7 +51,7 @@ function get_post_type_args() {
 		'parent_item_colon'  => __( 'Parent Tesla:', 'wp-tesla' ),
 		'menu_name'          => __( 'Teslas', 'wp-tesla' ),
 	];
-	
+
 	$args = [
 		'labels'              => $labels,
 		'hierarchical'        => false,
@@ -70,7 +70,9 @@ function get_post_type_args() {
 		'has_archive'         => true,
 		'query_var'           => true,
 		'can_export'          => true,
-		'rewrite'             => true,
+		'rewrite'             => [
+			'slug' => 'tesla',
+		],
 		'capability_type'     => 'post',
 		'supports'            => [
 			'title',
@@ -79,8 +81,8 @@ function get_post_type_args() {
 			'excerpt',
 		],
 	];
-	
-	return apply_filters( __FUNCTION__, $args );
+
+	return apply_filters( 'wp_tesla_get_vehicle_post_type_args', $args );
 }
 
 /**
