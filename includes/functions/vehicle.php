@@ -336,7 +336,7 @@ function sync_charge_state( $vehicle, $user_id = 0 ) {
 	if ( ! empty( $vehicle_id ) ) {
 
 		// TODO implement wakeup.
-		$api_response = API\charge_state( $vehicle->vehicle_id, $user_id );
+		$api_response = API\charge_state( $vehicle_id, $user_id );
 
 		if ( ! empty( $api_response ) && is_object( $api_response ) && isset( $api_response->response ) ) {
 			update_post_meta( $vehicle->ID, get_charge_state_key(), wp_json_encode( $api_response->response ) );
