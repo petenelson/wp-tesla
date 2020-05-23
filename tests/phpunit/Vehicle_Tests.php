@@ -79,7 +79,7 @@ class Vehicle_Tests extends \WP_UnitTestCase {
 		$this->assertSame( Tesla\get_post_type_name(), $vehicle->post_type );
 		$this->assertSame( $vehicle_id, get_post_meta( $vehicle->ID, Vehicle\get_vehicle_id_meta_prefix() . $vehicle_id, true ) );
 		$this->assertSame( $vehicle_id, Vehicle\get_vehicle_id( $vehicle->ID ) );
-		$this->assertSame( '12345', Vehicle\get_vin( $vehicle ) );
+		$this->assertSame( '12345', Vehicle\get_vin( $vehicle_id ) );
 
 		$post_id = $vehicle->ID;
 
@@ -100,7 +100,7 @@ class Vehicle_Tests extends \WP_UnitTestCase {
 		$this->assertSame( 'serenity', $vehicle->post_name );
 		$this->assertSame( $post_id, $vehicle->ID );
 		$this->assertSame( $vehicle_id, Vehicle\get_vehicle_id( $vehicle->ID ) );
-		$this->assertSame( '45678', Vehicle\get_vin( $vehicle ) );
+		$this->assertSame( '45678', Vehicle\get_vin( $vehicle_id ) );
 
 		wp_delete_post( $vehicle->ID, true );
 		wp_delete_post( $post_id, true );
