@@ -246,7 +246,7 @@ function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
 		$needs_sync = false;
 
 		if ( empty( $charge_data ) || $needs_sync ) {
-			sync_charge_state( $vehicle );
+			sync_charge_state( $vehicle_id );
 			$charge_data = get_post_meta( $vehicle->ID, get_charge_state_key(), true );
 		}
 
