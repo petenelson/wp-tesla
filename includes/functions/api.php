@@ -480,3 +480,43 @@ function vehicles( $user_id = 0 ) {
 
 	return apply_filters( 'wp_tesla_api_list_vehicles', $vehicles, $user_id );
 }
+
+/**
+ * Replaces the vehicle ID in the URL with the supplied vehicle ID.
+ *
+ * @param  string $url        The URL.
+ * @param  string $vehicle_id The vehcile ID.
+ * @return string
+ */
+function vehicleize_url( $url, $vehicle_id ) {
+	$url = str_replace( '{{vehicle_id}}', trim( $vehicle_id ), $url );
+	return apply_filters( 'wp_tesla_api_vehicleize_url', $url, $vehicle_id );
+}
+
+/**
+ * Gets the charge state for a vehicle.
+ *
+ * @param  string  $vehicle_id The vehicle ID.
+ * @param  integer $user_id    The user ID.
+ * @return array
+ */
+function charge_state( $vehicle_id, $user_id = 0 ) {
+
+	$api_response = request(
+		vehicleize_url( '/api/1/vehicles/{{vehicle_id}}/data_request/charge_state', $vehicle_id ),
+		'GET',
+		[
+			'user_id' => empty( $user_id ) ? get_current_user_id() : $user_id,
+		]
+	);
+
+	$vehicles = [];
+
+	$response = false;
+
+	if ( ! empty( $api_response['data'] ) && is_object( $api_response['data'] ) ) {
+		$response = $api_response['data'];
+	}
+
+	return apply_filters( 'wp_tesla_api_charge_state', $response, $vehicle_id, $user_id );
+}

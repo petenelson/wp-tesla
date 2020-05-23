@@ -9,6 +9,7 @@ namespace WPTesla\User;
 
 use \WPTesla\API;
 use \WPTesla\Helpers;
+use \WPTesla\Vehicle;
 
 /**
  * Set up theme defaults and register supported WordPress features.
@@ -213,6 +214,8 @@ function display_logged_in_template() {
 	);
 
 	$status = get_account_status();
+
+	// Vehicle\sync_charge_state( Vehicle\get_existing_vehicle( '33015387032628850' ) );
 
 	?>
 
