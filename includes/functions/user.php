@@ -25,6 +25,7 @@ function setup() {
 	add_action( 'admin_post_wp_tesla_login', $n( 'maybe_login_user' ) );
 	add_action( 'admin_action_wp_tesla_logout', $n( 'maybe_logout_user' ) );
 	add_action( 'admin_action_wp_tesla_refresh_token', $n( 'maybe_refresh_token' ) );
+	add_action( 'admin_action_wp_tesla_sync_vehicles', $n( 'maybe_sync_vehicles' ) );
 
 	// Custom actions.
 	add_action( 'wp_tesla_display_login_form', $n( 'display_login_form' ) );
@@ -215,8 +216,6 @@ function display_logged_in_template() {
 
 	$status = get_account_status();
 
-	// Vehicle\sync_charge_state( Vehicle\get_existing_vehicle( '33015387032628850' ) );
-
 	?>
 
 	<table class="form-table" role="presentation">
@@ -290,19 +289,32 @@ function maybe_login_user() {
 
 	if ( wp_verify_nonce( $post['wp_tesla_nonce'], 'login' ) ) {
 
-		$a = \WPTesla\API\authenticate(
+		$results = \WPTesla\API\authenticate(
 			trim( $post['email'] ),
 			trim( $post['password'] ),
 			get_current_user_id()
 		);
 
-		$url = add_query_arg(
-			[
-				'post_type' => rawurlencode( \WPTesla\PostTypes\Tesla\get_post_type_name() ),
-				'page'      => rawurlencode( get_settings_menu_slug() ),
-			],
-			admin_url( 'edit.php' )
-		);
+		if ( $results['authenticated'] ) {
+
+			// Redirect to sync vehicles.
+			$url = add_query_arg(
+				[
+					'action'         => 'wp_tesla_sync_vehicles',
+					'wp_tesla_nonce' => rawurlencode( wp_create_nonce( 'sync_vehicles' ) ),
+				],
+				admin_url( 'admin.php' )
+			);
+		} else {
+			$url = add_query_arg(
+				[
+					'post_type' => rawurlencode( \WPTesla\PostTypes\Tesla\get_post_type_name() ),
+					'page'      => rawurlencode( get_settings_menu_slug() ),
+					'error'     => 'invalid-login',
+				],
+				admin_url( 'edit.php' )
+			);
+		}
 
 		wp_safe_redirect( $url );
 		exit;
@@ -325,12 +337,51 @@ function maybe_logout_user() {
 
 	if ( wp_verify_nonce( $get['wp_tesla_nonce'], 'logout' ) ) {
 
+		// Logout the user.
 		logout();
 
+		// Redirect to the account/settings page.
 		$url = add_query_arg(
 			[
 				'post_type' => rawurlencode( \WPTesla\PostTypes\Tesla\get_post_type_name() ),
 				'page'      => rawurlencode( get_settings_menu_slug() ),
+			],
+			admin_url( 'edit.php' )
+		);
+
+		wp_safe_redirect( $url );
+		exit;
+	}
+}
+
+/**
+ * Admin action hook to sync the vehicles from the API to WP posts.
+ *
+ * @return void
+ */
+function maybe_sync_vehicles() {
+
+	$get = filter_var_array(
+		$_GET,
+		[
+			'wp_tesla_nonce' => FILTER_SANITIZE_STRING,
+		]
+	);
+
+	if ( wp_verify_nonce( $get['wp_tesla_nonce'], 'sync_vehicles' ) ) {
+
+		$vehicles = API\vehicles( get_current_user_id() );
+
+		if ( is_array( $vehicles ) ) {
+			foreach ( $vehicles as $vehicle_data ) {
+				Vehicle\sync_vehicle( $vehicle_data['id_s'], get_current_user_id(), $vehicle_data );
+			}
+		}
+
+		// Redirect to the vehicles page.
+		$url = add_query_arg(
+			[
+				'post_type' => rawurlencode( \WPTesla\PostTypes\Tesla\get_post_type_name() ),
 			],
 			admin_url( 'edit.php' )
 		);

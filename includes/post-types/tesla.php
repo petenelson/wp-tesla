@@ -29,6 +29,7 @@ function setup() {
 	add_action( 'wp_tesla_vehicle_do_custom_column_vehicle_id', $n( 'column_vehicle_id' ) );
 	add_action( 'wp_tesla_vehicle_do_custom_column_battery_level', $n( 'column_battery_level' ) );
 	add_action( 'wp_tesla_vehicle_do_custom_column_estimated_range', $n( 'column_estimated_range' ) );
+	add_action( 'wp_tesla_vehicle_do_custom_column_vin', $n( 'column_vin' ) );
 }
 
 /**
@@ -112,9 +113,10 @@ function register() {
 function get_custom_columns() {
 
 	$columns = [
-		'vehicle_id'      => __( 'ID', 'wp-tesla' ),
 		'battery_level'   => __( 'Battery', 'wp-tesla' ),
 		'estimated_range' => __( 'Range', 'wp-tesla' ),
+		'vehicle_id'      => __( 'ID', 'wp-tesla' ),
+		'vin'             => __( 'VIN', 'wp-tesla' ),
 	];
 
 	return apply_filters( 'wp_tesla_vehicle_get_custom_columns', $columns );
@@ -200,4 +202,14 @@ function column_estimated_range( $vehicle_id ) {
 	}
 
 	echo esc_html( $est_range );
+}
+
+/**
+ * Outputs the VIN.
+ *
+ * @param  string $vehicle_id The vehicle ID.
+ * @return void
+ */
+function column_vin( $vehicle_id ) {
+	echo esc_html( Vehicle\get_vin( $vehicle_id ) );
 }

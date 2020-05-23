@@ -186,6 +186,7 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
 
 		wp_update_post( $postarr );
 
+		// Update the various vehicle items that don't change.
 		update_post_meta( $vehicle->ID, get_vin_key(), sanitize_text_field( $vehicle_data['vin'] ) );
 
 		$option_code_ids = [];
@@ -211,12 +212,13 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
  *
  * @return int
  */
-function charge_sync_interval() {
+function get_charge_sync_interval() {
 	return apply_filters( 'wp_tesla_charge_sync_interval', HOUR_IN_SECONDS * 1 );
 }
 
 /**
- * Get the charge state data for a vehicle.
+ * Get the charge state data for a vehicle. Automatically synce charge
+ * state from the API to the post meta if-needed.
  *
  * @param  string $vehicle_id The vehicle ID.
  * @param  int    $user_id    The user ID.
@@ -240,13 +242,18 @@ function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
 
 	if ( ! empty( $vehicle ) ) {
 
-		$charge_data = get_post_meta( $vehicle->ID, get_charge_state_key(), true );
+		$now          = time();
+		$charge_data  = get_post_meta( $vehicle->ID, get_charge_state_key(), true );
+		$last_updated = absint( get_post_meta( $vehicle->ID, get_charge_state_updated_key(), true ) );
+		$needs_sync   = empty( $charge_data );
 
-		// TODO see if we need to sync based on the last time it was updated.
-		$needs_sync = false;
+		// Check the seconds since the last sync with the current time.
+		if ( ! $needs_sync && ( $now - $last_updated ) > get_charge_sync_interval() ) {
+			$needs_sync = true;
+		}
 
-		if ( empty( $charge_data ) || $needs_sync ) {
-			sync_charge_state( $vehicle_id );
+		if ( $needs_sync ) {
+			sync_charge_state( $vehicle_id, $user_id );
 			$charge_data = get_post_meta( $vehicle->ID, get_charge_state_key(), true );
 		}
 
@@ -269,19 +276,21 @@ function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
 /**
  * Get the vehicle VIN.
  *
- * @param  int|WP_Post $post The post ID or object.
- * @return int
+ * @param  string $vehicle_id The vehicle ID.
+ * @param  int    $user_id    The user ID.
+ * @return string
  */
-function get_vin( $post ) {
+function get_vin( $vehicle_id, $user_id = 0 ) {
 
 	$vin = false;
 
-	$post = get_post( $post );
-	if ( is_a( $post, '\WP_Post' ) ) {
-		$vin = get_post_meta( $post->ID, get_vin_key(), true );
+	$vehicle = get_existing_vehicle( $vehicle_id, $user_id );
+
+	if ( is_a( $vehicle, '\WP_Post' ) ) {
+		$vin = get_post_meta( $vehicle->ID, get_vin_key(), true );
 	}
 
-	return apply_filters( 'wp_tesla_vehicle_get_vin', $vin, $post );
+	return apply_filters( 'wp_tesla_vehicle_get_vin', $vin, $vehicle_id, $user_id );
 }
 
 /**
@@ -314,33 +323,134 @@ function get_estimated_range( $vehicle_id, $user_id = 0 ) {
 	$est_battery_range = get_charge_state( $vehicle_id, $user_id, [ 'field' => 'est_battery_range' ] );
 
 	if ( false !== $est_battery_range ) {
-		$est_battery_range = floatval( $est_battery_range );
+		$est_battery_range = floor( floatval( $est_battery_range ) );
 	}
 
 	return apply_filters( 'wp_tesla_vehicle_get_estimated_range', $est_battery_range, $vehicle_id, $user_id );
 }
 
 /**
- * Syncs charge state from the API to the post meta.
+ * Syncs charge state from the API to the post meta. Wakes up the vehicle
+ * to get the current charge state.
  *
- * @param  WP_Post $vehicle The vehicle post object.
- * @param  int     $user_id The user ID.
+ * @param  string $vehicle_id The vehicle ID.
+ * @param  int    $user_id    The user ID.
  * @return void
  */
-function sync_charge_state( $vehicle, $user_id = 0 ) {
+function sync_charge_state( $vehicle_id, $user_id = 0 ) {
 
 	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
-	$vehicle_id = get_vehicle_id( $vehicle->ID );
+	$vehicle = get_existing_vehicle( $vehicle_id, $user_id );
 
-	if ( ! empty( $vehicle_id ) ) {
+	if ( ! empty( $vehicle ) ) {
 
-		// TODO implement wakeup.
-		$api_response = API\charge_state( $vehicle_id, $user_id );
+		if ( wakeup( $vehicle_id, $user_id ) ) {
+			$api_response = API\charge_state( $vehicle_id, $user_id );
 
-		if ( ! empty( $api_response ) && is_object( $api_response ) && isset( $api_response->response ) ) {
-			update_post_meta( $vehicle->ID, get_charge_state_key(), wp_json_encode( $api_response->response ) );
-			update_post_meta( $vehicle->ID, get_charge_state_updated_key(), time() );
+			if ( ! empty( $api_response ) && is_object( $api_response ) && isset( $api_response->response ) ) {
+				update_post_meta( $vehicle->ID, get_charge_state_key(), wp_json_encode( $api_response->response ) );
+				update_post_meta( $vehicle->ID, get_charge_state_updated_key(), time() );
+			}
 		}
 	}
+}
+
+/**
+ * Wakes up a vehicle.
+ *
+ * @param  string $vehicle_id The vehicle ID.
+ * @param  int    $user_id    The user ID.
+ * @param  array  $args       Additonal args.
+ * @return bool
+ */
+function wakeup( $vehicle_id, $user_id = 0, $args = [] ) {
+
+	$args = wp_parse_args(
+		$args,
+		[
+			'show_cli_lines' => false,
+		]
+	);
+
+	$cli = true === $args['show_cli_lines'];
+
+	// Number of times we try to wakeup the vehicle.
+	$max_tries  = apply_filters( 'wp_tesla_wakeup_max_tries', 5 );
+
+	// Number of seconds to wait between wakeup tries in seconds.
+	$sleep_time = apply_filters( 'wp_tesla_wakeup_sleep_between_tries', 3 );
+
+	$online = false;
+
+	$tries = 1;
+
+	while ( ! $online && $tries <= $max_tries ) {
+
+		if ( $cli ) {
+			\WP_CLI::line(
+				sprintf(
+					'Attempting wakeup of %1$s, try #%2$d of %3$d...',
+					$vehicle_id,
+					$tries,
+					$max_tries
+				)
+			);
+		}
+
+		$api_response = API\wakeup( $vehicle_id, $user_id );
+
+		if ( ! empty( $api_response ) && is_object( $api_response ) && isset( $api_response->response ) ) {
+
+			$response = wp_parse_args(
+				(array) $api_response->response,
+				[
+					'state' => '',
+				]
+			);
+
+			if ( $cli ) {
+
+				if ( 'online' === $response['state'] ) {
+					\WP_CLI::success(
+						sprintf(
+							'%1$s',
+							$response['state']
+						)
+					);
+				} else {
+					\WP_CLI::warning(
+						sprintf(
+							'%1$s',
+							$response['state']
+						)
+					);
+				}
+			}
+
+			$online = 'online' === $response['state'];
+		}
+
+		if ( $online ) {
+			break;
+		}
+
+		$tries++;
+
+		if ( $tries <= $max_tries ) {
+
+			if ( $cli ) {
+				\WP_CLI::line(
+					sprintf(
+						'Sleeping for %1$d seconds...',
+						$sleep_time
+					)
+				);
+			}
+
+			sleep( $sleep_time );
+		}
+	}
+
+	return $online;
 }

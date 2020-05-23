@@ -62,7 +62,14 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 		$request_args['body'] = json_encode( $params['body'] );
 	}
 
-	if ( 'PATCH' === $method || 'DELETE' === $method || ! $params['cache_response'] ) {
+	$noncached_methods = [
+		'PUT',
+		'POST',
+		'PATCH',
+		'DELETE',
+	];
+
+	if ( in_array( $method, $noncached_methods, true ) || ! $params['cache_response'] ) {
 		$caching_enabled = false;
 	}
 
@@ -136,6 +143,7 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 				];
 
 				if ( $caching_enabled && true === $params['cache_response'] && in_array( $code, $allowed_codes ) ) {
+					invalidate_api_cache();
 					wp_cache_set( $cache_key, $data, '', $cache_time );
 				}
 			}
@@ -519,4 +527,28 @@ function charge_state( $vehicle_id, $user_id = 0 ) {
 	}
 
 	return apply_filters( 'wp_tesla_api_charge_state', $response, $vehicle_id, $user_id );
+}
+
+/**
+ * Wakes up the vehicle.
+ *
+ * @param  string  $vehicle_id The vehicle ID.
+ * @param  integer $user_id    The user ID.
+ * @return array
+ */
+function wakeup( $vehicle_id, $user_id = 0 ) {
+
+	$api_response = request(
+		vehicleize_url( '/api/1/vehicles/{{vehicle_id}}/wake_up', $vehicle_id ),
+		'POST',
+		[
+			'user_id' => empty( $user_id ) ? get_current_user_id() : $user_id,
+		]
+	);
+
+	if ( ! empty( $api_response['data'] ) && is_object( $api_response['data'] ) ) {
+		$response = $api_response['data'];
+	}
+
+	return apply_filters( 'wp_tesla_api_wakeup', $response, $vehicle_id, $user_id );
 }
