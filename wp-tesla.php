@@ -30,7 +30,7 @@ $files = [
 	'functions/user.php',
 	'functions/vehicle.php',
 	'functions/cli.php',
-	'functions/templates.php',
+	'functions/blocks.php',
 	'post-types/tesla.php',
 	'taxonomies/option-code.php',
 ];
@@ -47,6 +47,6 @@ register_deactivation_hook( __FILE__, '\WPTesla\Core\deactivate' );
 \WPTesla\Core\setup();
 \WPTesla\User\setup();
 \WPTesla\REST\setup();
-\WPTesla\Templates\setup();
+\WPTesla\Blocks\setup();
 \WPTesla\PostTypes\Tesla\setup();
 \WPTesla\Taxonomies\OptionCode\setup();

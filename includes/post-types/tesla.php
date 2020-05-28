@@ -87,6 +87,7 @@ function get_post_type_args() {
 		'capability_type'     => 'post',
 		'supports'            => [
 			'title',
+			'editor',
 			'author',
 			'thumbnail',
 			'excerpt',
