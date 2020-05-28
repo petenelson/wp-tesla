@@ -58,6 +58,24 @@ function get_existing_vehicle( $vehicle_id, $user_id = 0 ) {
 }
 
 /**
+ * Gets the vehicle post for the current post.
+ *
+ * @return array Vehicle and ID.
+ */
+function get_the_vehicle() {
+
+	$results = [];
+
+	if ( is_singular( \WPTesla\PostTypes\Tesla\get_post_type_name() ) ) {
+		$results['post']       = get_queried_object();
+		$results['vehicle_id'] = get_vehicle_id( $results['post']->ID );
+		$results['user_id']    = $results['post']->post_author;
+	}
+
+	return apply_filters( 'wp_tesla_get_the_vehicle', $results );
+}
+
+/**
  * Gets the meta key prefix for storing the vehicle ID.
  *
  * @return string

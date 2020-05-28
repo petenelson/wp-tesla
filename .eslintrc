@@ -29,6 +29,7 @@
     "no-alert": [ 1 ],
     "no-unused-vars": [ "warn" ],
     "require-jsdoc": [ "warn" ],
+    "react/display-name": [ "warn" ],
 		"camelcase": [ 2 ],
 		"react-hooks/rules-of-hooks": "error",
 		"react/prop-types": [1]
