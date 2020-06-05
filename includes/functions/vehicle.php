@@ -21,6 +21,9 @@ function setup() {
 	$n = function( $function ) {
 		return __NAMESPACE__ . "\\$function";
 	};
+
+	// Cron handler for automatic syncing of the charge state.
+	add_action( 'wp_tesla_sync_vehicle_charge_state', $n( 'get_charge_state' ) );
 }
 
 /**
@@ -221,6 +224,8 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
 		$vehicle = get_post( $vehicle->ID );
 	}
 
+	maybe_create_sync_crons( $vehicle_id, $user_id );
+
 	return apply_filters( 'wp_tesla_sync_vehicle', $vehicle, $vehicle_id, $user_id );
 }
 
@@ -235,7 +240,7 @@ function get_charge_sync_interval() {
 }
 
 /**
- * Get the charge state data for a vehicle. Automatically synce charge
+ * Get the charge state data for a vehicle. Automatically syncs charge
  * state from the API to the post meta if-needed.
  *
  * @param  string $vehicle_id The vehicle ID.
@@ -471,4 +476,28 @@ function wakeup( $vehicle_id, $user_id = 0, $args = [] ) {
 	}
 
 	return $online;
+}
+
+/**
+ * Updates or creates a Tesla vehicle post
+ *
+ * @param string $vehicle_id The Tesla vehicle ID.
+ * @param int    $user_id    The WP user ID.
+ * @return void
+ */
+function maybe_create_sync_crons( $vehicle_id, $user_id ) {
+
+	$args = [ $vehicle_id, $user_id ];
+
+	$hooks = [
+		'wp_tesla_sync_vehicle_charge_state',
+	];
+
+	foreach ( $hooks as $hook ) {
+		$scheduled = wp_next_scheduled( $hook, $args );
+
+		if ( empty( $scheduled ) ) {
+			wp_schedule_event( time() + MINUTE_IN_SECONDS, 'hourly', $hook, $args );
+		}
+	}
 }

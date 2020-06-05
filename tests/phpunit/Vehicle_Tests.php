@@ -70,6 +70,9 @@ class Vehicle_Tests extends \WP_UnitTestCase {
 
 		$vehicle_id = '33015387032628850';
 
+		$scheduled = wp_next_scheduled( 'wp_tesla_sync_vehicle_charge_state', [ $vehicle_id, $this->admin->ID ] );
+		$this->assertEmpty( $scheduled );
+
 		$vehicle = Vehicle\sync_vehicle( $vehicle_id, $this->admin->ID, $vehicle_data );
 
 		$this->assertInstanceOf( '\WP_Post', $vehicle );
@@ -101,6 +104,9 @@ class Vehicle_Tests extends \WP_UnitTestCase {
 		$this->assertSame( $post_id, $vehicle->ID );
 		$this->assertSame( $vehicle_id, Vehicle\get_vehicle_id( $vehicle->ID ) );
 		$this->assertSame( '45678', Vehicle\get_vin( $vehicle_id ) );
+
+		$scheduled = wp_next_scheduled( 'wp_tesla_sync_vehicle_charge_state', [ $vehicle_id, $this->admin->ID ] );
+		$this->assertGreaterThan( 0, $scheduled );
 
 		wp_delete_post( $vehicle->ID, true );
 		wp_delete_post( $post_id, true );
