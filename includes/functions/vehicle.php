@@ -286,6 +286,8 @@ function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
 				$charge_data = (array) $charge_data;
 			}
 		}
+
+		maybe_create_sync_crons( $vehicle_id, $user_id );
 	}
 
 	// Do we only want a single field?
