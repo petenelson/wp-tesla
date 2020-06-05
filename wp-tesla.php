@@ -46,6 +46,7 @@ register_deactivation_hook( __FILE__, '\WPTesla\Core\deactivate' );
 // Bootstrap.
 \WPTesla\Core\setup();
 \WPTesla\User\setup();
+\WPTesla\Vehicle\setup();
 \WPTesla\REST\setup();
 \WPTesla\Blocks\setup();
 \WPTesla\PostTypes\Tesla\setup();
