@@ -26,6 +26,7 @@ function setup() {
 
 	add_shortcode( 'wp_tesla_battery_level', $n( 'shortcode_battery_level' ) );
 	add_shortcode( 'wp_tesla_estimated_range', $n( 'shortcode_estimated_range' ) );
+	add_shortcode( 'wp_tesla_charge_last_updated', $n( 'shortcode_charge_last_updated' ) );
 }
 
 /**
@@ -239,4 +240,26 @@ function shortcode_estimated_range() {
 	ob_start();
 	render_estimated_range();
 	return ob_get_clean();
+}
+
+/**
+ * Gets the wp_tesla_charge_last_updated shortcode content.
+ *
+ * @return string
+ */
+function shortcode_charge_last_updated() {
+
+	$vehicle = Vehicle\get_the_vehicle();
+
+	if ( ! empty( $vehicle ) ) {
+
+		$date_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+
+		$last_updated_ts = absint( get_post_meta( $vehicle['post']->ID, Vehicle\get_charge_state_updated_key(), true ) );
+
+		$last_updated = new \DateTime( 'now', wp_timezone() );
+		$last_updated->setTimestamp( $last_updated_ts );
+
+		return esc_html( $last_updated->format( $date_format ) );
+	}
 }
