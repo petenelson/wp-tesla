@@ -489,7 +489,7 @@ function wakeup( $vehicle_id, $user_id = 0, $args = [] ) {
  */
 function maybe_create_sync_crons( $vehicle_id, $user_id ) {
 
-	$args = [ $vehicle_id, $user_id ];
+	$args = [ $vehicle_id, absint( $user_id ) ];
 
 	$hooks = [
 		'wp_tesla_sync_vehicle_charge_state',
