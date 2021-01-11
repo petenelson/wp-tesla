@@ -6,17 +6,6 @@ jobs:
     docker:
       # See https://circleci.com/docs/2.0/circleci-images/#php
       - image: 10up/wp-php-fpm-dev:7.3
-        environment:
-          MYSQL_USER: root
-      - image: circleci/mysql:5.7.30
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --port=3306
-        ports:
-          - "3306:3306"
-        environment:
-          MYSQL_USER: root
-          MYSQL_HOST: "127.0.0.1"
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_DATABASE: wordpress_test
 
     steps:
       - checkout
@@ -43,17 +32,6 @@ jobs:
     docker:
       # See https://circleci.com/docs/2.0/circleci-images/#php
       - image: 10up/wp-php-fpm-dev:7.3
-        environment:
-          MYSQL_USER: root
-      - image: circleci/mysql:5.7.30
-        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --port=3306
-        ports:
-          - "3306:3306"
-        environment:
-          MYSQL_USER: root
-          MYSQL_HOST: "127.0.0.1"
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_DATABASE: wordpress_test
 
     steps:
       - checkout
