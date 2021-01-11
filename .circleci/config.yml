@@ -1,10 +1,48 @@
 version: 2
 jobs:
 
+  build-and-test:
+
+    docker:
+      # See https://circleci.com/docs/2.0/circleci-images/#php
+      - image: circleci/php:7.4.11-cli-buster-node
+        environment:
+          MYSQL_USER: root
+      - image: circleci/mysql:5.7.30
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --port=3306
+        ports:
+          - "3306:3306"
+        environment:
+          MYSQL_USER: root
+          MYSQL_HOST: "127.0.0.1"
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_DATABASE: wordpress_test
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - wp-tesla-{{ .Branch }}-{{ checksum "package-lock.json" }}-{{ checksum "composer.lock" }}
+      - run:
+          name: Install Tests
+          command: ./bin/install-tests.sh
+      - run:
+          name: Build
+          command: ./bin/build.sh
+      - run:
+          name: Run Tests
+          command: ./bin/run-tests.sh
+      - save_cache:
+          key: wp-tesla-{{ .Branch }}-{{ checksum "package-lock.json" }}-{{ checksum "composer.lock" }}
+          paths:
+            - node_modules
+            - vendor
+
   build-and-deploy:
 
     docker:
-      - image: circleci/php:7.3.0-cli-stretch-node
+      # See https://circleci.com/docs/2.0/circleci-images/#php
+      - image: circleci/php:7.4.11-cli-buster-node
         environment:
           MYSQL_USER: root
       - image: circleci/mysql:5.7.30
@@ -45,11 +83,14 @@ jobs:
 
 workflows:
   version: 2
+  build-and-test:
+    jobs:
+      - build-and-test
   build-and-deploy:
     jobs:
       - build-and-deploy:
           filters:
             branches:
               only:
-                - main
+                - trunk
                 - develop
