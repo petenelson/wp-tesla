@@ -5,7 +5,7 @@ jobs:
 
     docker:
       # See https://circleci.com/docs/2.0/circleci-images/#php
-      - image: circleci/php:7.4.11-cli-node
+      - image: circleci/php:7.4.9-cli-buster
         environment:
           MYSQL_USER: root
       - image: circleci/mysql:5.7.30
@@ -42,7 +42,7 @@ jobs:
 
     docker:
       # See https://circleci.com/docs/2.0/circleci-images/#php
-      - image: circleci/php:7.4.11-cli-node
+      - image: circleci/php:7.4.9-cli-buster
         environment:
           MYSQL_USER: root
       - image: circleci/mysql:5.7.30
