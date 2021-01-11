@@ -7,11 +7,12 @@ set -x
 set -euo pipefail
 
 sudo -E docker-php-ext-install mysqli
-sudo apt-get install mysql-client
+sudo apt-get update
+sudo apt-get install default-mysql-client
 
 # Set up WordPress installation.
 export WP_DEVELOP_DIR=/tmp/wordpress/
-export WP_VERSION=5.4.1
+export WP_VERSION=5.5
 
 mkdir -p $WP_DEVELOP_DIR
 
