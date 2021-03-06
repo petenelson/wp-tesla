@@ -28,7 +28,10 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 	$retries         = 0;
 
 	$response = null;
-	$endpoint = get_base_url() . $endpoint;
+
+	if ( 0 !== stripos( $endpoint, 'http' ) ) {
+		$endpoint = get_base_url() . $endpoint;
+	}
 
 	if ( empty( filter_var( $endpoint, FILTER_VALIDATE_URL ) ) ) {
 		return false;
@@ -434,6 +437,67 @@ function get_client_secret() {
 function authenticate( $email, $password, $user_id = 0 ) {
 
 	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
+	$form_values = [
+		'grant_type'     => 'password',
+		'client_id'      => get_client_id(),
+		'client_secret'  => get_client_secret(),
+		'email'          => $email,
+		'password'       => $password,
+	];
+
+	$api_response = request(
+		'/oauth/token',
+		'POST',
+		[
+			'cache_response' => false,
+			'require_token'  => false,
+			'form'           => $form_values,
+		]
+	);
+
+	$results = process_token_response( $api_response, $user_id );
+
+	return apply_filters( 'wp_tesla_api_authenticate', $results );
+}
+
+/**
+ * Authenticates the user with the Tesla API (oauth2/v3/authorize).
+ *
+ * @param  string $email    The email address.
+ * @param  string $password The password.
+ * @param  int    $user_id  The WordPress user ID, defaults to the
+ *                          current user ID.
+ * @return array
+ */
+function authenticate_v3( $email, $password, $user_id = 0 ) {
+
+	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
+	$code_verifier = wp_generate_password( 86, false );
+	$code_challenge = base64_encode( $code_verifier );
+	$state = wp_generate_password( 20, false ) . time();
+
+	$url = apply_filters( 'wp_tesla_authorize_v3_base_url', 'https://auth.tesla.com/oauth2/v3/authorize' );
+
+	$url = add_query_arg(
+		[
+			'client_id' => 'ownerapi',
+			'code_challenge' => rawurlencode( $code_challenge ),
+			'code_challenge_method' => 'S256',
+			'redirect_uri' => 'https://auth.tesla.com/void/callback',
+			'response_type' => 'code',
+			'scope' => rawurlencode( 'openid email offline_access' ),
+			'login_hint' => rawurlencode( $email ),
+		],
+		$url
+	);
+
+	var_dump( $url ); die();
+
+	die();
+
+
 
 	$form_values = [
 		'grant_type'     => 'password',
