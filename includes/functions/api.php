@@ -28,7 +28,10 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 	$retries         = 0;
 
 	$response = null;
-	$endpoint = get_base_url() . $endpoint;
+
+	if ( 0 !== stripos( $endpoint, 'http' ) ) {
+		$endpoint = get_base_url() . $endpoint;
+	}
 
 	if ( empty( filter_var( $endpoint, FILTER_VALIDATE_URL ) ) ) {
 		return false;
@@ -114,6 +117,7 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 		$response = wp_remote_request( $endpoint, $request_args );
 
 		$api_response['response_code'] = wp_remote_retrieve_response_code( $response );
+		$api_response['response']      = $response;
 
 		if ( is_wp_error( $response ) ) {
 			$response = false;
@@ -127,6 +131,10 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 	if ( ! empty( $response ) ) {
 		$body = wp_remote_retrieve_body( $response );
 		$code = wp_remote_retrieve_response_code( $response );
+
+		if ( 'raw' === $params['return'] ) {
+			$api_response['body'] = $body;
+		}
 
 		if ( ! empty( $body ) ) {
 
@@ -166,6 +174,9 @@ function get_default_request_params() {
 		'form'           => false,
 		'require_token'  => true,
 		'cache_response' => true,
+
+		// Defaults to parsing JSON, pass 'raw' to return the raw response.
+		'return'         => '',
 
 		// Lets us fine tune the cache time for requests.
 		'cache_time'     => 0,
@@ -316,13 +327,14 @@ function refresh_token( $user_id = 0 ) {
 
 	$form_values = [
 		'grant_type'     => 'refresh_token',
-		'client_id'      => get_client_id(),
+		'client_id'      => 'ownerapi',
 		'client_secret'  => get_client_secret(),
 		'refresh_token'  => $refresh_token,
+		'scope'          => 'openid email offline_access',
 	];
 
 	$api_response = request(
-		'/oauth/token',
+		'https://auth.tesla.com/oauth2/v3/token',
 		'POST',
 		[
 			'cache_response' => false,
@@ -377,6 +389,7 @@ function process_token_response( $api_response, $user_id = 0 ) {
 	$results = [
 		'authenticated'  => false,
 		'response_code'  => false,
+		'token'          => false,
 		'user_id'        => $user_id,
 		'response_code'  => $api_response['response_code'],
 	];
@@ -396,6 +409,8 @@ function process_token_response( $api_response, $user_id = 0 ) {
 
 			// Store the expiration date, all UTC.
 			update_user_option( $user_id, get_expires_key(), $data->created_at + $data->expires_in );
+
+			$results['token'] = $data->access_token;
 		}
 	}
 
@@ -454,6 +469,196 @@ function authenticate( $email, $password, $user_id = 0 ) {
 	);
 
 	$results = process_token_response( $api_response, $user_id );
+
+	return apply_filters( 'wp_tesla_api_authenticate', $results );
+}
+
+/**
+ * Authenticates the user with the Tesla API (oauth2/v3/authorize).
+ *
+ * @param  string $email    The email address.
+ * @param  string $password The password.
+ * @param  int    $user_id  The WordPress user ID, defaults to the
+ *                          current user ID.
+ * @return array
+ */
+function authenticate_v3( $email, $password, $user_id = 0 ) {
+
+	// See https://tesla-api.timdorr.com/api-basics/authentication for details.
+	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
+	$results = [
+		'authenticated'  => false,
+	];
+
+	$code_verifier  = wp_generate_password( 86, false );
+	$code_challenge = base64_encode( $code_verifier );
+	$state          = wp_generate_password( 20, false ) . time();
+
+	$url = apply_filters( 'wp_tesla_authorize_v3_base_url', 'https://auth.tesla.com/oauth2/v3/authorize' );
+
+	$url = add_query_arg(
+		[
+			'client_id'             => 'ownerapi',
+			'code_challenge'        => rawurlencode( $code_challenge ),
+			'code_challenge_method' => 'S256',
+			'redirect_uri'          => 'https://auth.tesla.com/void/callback',
+			'response_type'         => 'code',
+			'scope'                 => rawurlencode( 'openid email offline_access' ),
+		],
+		$url
+	);
+
+	$url = apply_filters( 'wp_tesla_authorize_v3_url', $url );
+
+	$api_response = request(
+		$url,
+		'GET',
+		[
+			'cache_response' => false,
+			'require_token'  => false,
+			'return'         => 'raw',
+		]
+	);
+
+	if ( empty( $api_response['body'] ) ) {
+		return apply_filters( 'wp_tesla_api_authenticate', process_token_response( $api_response, $user_id ) );
+	}
+
+	$session_id = wp_remote_retrieve_cookie( $api_response['response'], 'tesla-auth.sid' );
+
+	// Find the neccesary values from the HTML.
+	$pattern = '/<input.*?>/';
+
+	preg_match_all( $pattern, $api_response['body'], $matches, PREG_SET_ORDER );
+	$matches = ! is_array( $matches ) ? [] : $matches;
+
+	$form = [
+		'_csrf'          => '',
+		'_phase'         => '',
+		'_process'       => '',
+		'transaction_id' => '',
+	];
+
+	// Get the form values.
+	foreach ( array_keys( $form ) as $key ) {
+		foreach ( $matches as $match ) {
+			if ( false !== stripos( $match[0], 'name="' . $key . '"' ) ) {
+				preg_match( '/value="(?<value>.*?)"/', $match[0], $value );
+				if ( ! empty( $value ) ) {
+					$form[ $key ] = $value['value'];
+				}
+			}
+		}
+	}
+
+	foreach ( $form as $key => $value ) {
+		if ( empty( $value ) ) {
+			// Needs a better response eventually.
+			return false;
+		}
+	}
+
+	$form['identity'] = $email;
+	$form['credential'] = $password;
+
+	$post_args = [
+		'redirection' => 0,
+		'cookies'     => [
+			$session_id->name => $session_id->value,
+		],
+	];
+
+	// Do the form submission.
+	$api_response = request(
+		$url,
+		'POST',
+		[
+			'cache_response' => false,
+			'require_token'  => false,
+			'return'         => 'raw',
+			'form'           => $form,
+		],
+		$post_args
+	);
+
+	$code = false;
+
+	// Get the code from the redirect location.
+	if ( 302 === $api_response['response_code'] ) {
+
+		$location = wp_remote_retrieve_header( $api_response['response'], 'location' );
+
+		$parts = wp_parse_url( $location );
+
+		wp_parse_str( $parts['query'], $arr );
+
+		$arr = wp_parse_args(
+			$arr,
+			[
+				'code' => '',
+			]
+		);
+
+		$code = $arr['code'];
+	}
+
+	if ( ! empty( $code ) ) {
+
+		// Exchange authorization code for bearer token.
+		$form_values = [
+			'grant_type'    => 'authorization_code',
+			'client_id'     => 'ownerapi',
+			'code'          => $code,
+			'code_verifier' => $code_verifier,
+			'redirect_uri'  => 'https://auth.tesla.com/void/callback',
+		];
+
+		$api_response = request(
+			'https://auth.tesla.com/oauth2/v3/token',
+			'POST',
+			[
+				'cache_response' => false,
+				'require_token'  => false,
+				'return'         => 'raw',
+				'form'           => $form_values,
+			]
+		);
+
+		$bearer = json_decode( $api_response['body'], true );
+
+		$bearer = wp_parse_args(
+			$bearer,
+			[
+				'access_token' => '',
+			]
+		);
+
+		// Exchange bearer token for access token.
+		$form_values = [
+			'grant_type'    => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+			'client_id'     => get_client_id(),
+			'client_secret' => get_client_secret(),
+		];
+
+		$api_response = request(
+			'https://owner-api.teslamotors.com/oauth/token',
+			'POST',
+			[
+				'cache_response' => false,
+				'require_token'  => false,
+				'form'           => $form_values,
+			],
+			[
+				'headers' => [
+					'Authorization' => 'Bearer ' . trim( $bearer['access_token'] ),
+				],
+			]
+		);
+
+		$results = process_token_response( $api_response, $user_id );
+
+	}
 
 	return apply_filters( 'wp_tesla_api_authenticate', $results );
 }

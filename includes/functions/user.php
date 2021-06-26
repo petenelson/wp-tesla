@@ -272,7 +272,7 @@ function display_logged_in_template() {
 }
 
 /**
- * Admin actionhook to logout the user.
+ * Admin action hook to login the user.
  *
  * @return void
  */
@@ -289,7 +289,7 @@ function maybe_login_user() {
 
 	if ( wp_verify_nonce( $post['wp_tesla_nonce'], 'login' ) ) {
 
-		$results = \WPTesla\API\authenticate(
+		$results = \WPTesla\API\authenticate_v3(
 			trim( $post['email'] ),
 			trim( $post['password'] ),
 			get_current_user_id()
