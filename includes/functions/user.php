@@ -22,7 +22,6 @@ function setup() {
 	};
 
 	add_action( 'admin_menu', $n( 'add_tesla_settings_menu' ) );
-	add_action( 'admin_post_wp_tesla_login', $n( 'maybe_login_user' ) );
 	add_action( 'admin_action_wp_tesla_logout', $n( 'maybe_logout_user' ) );
 	add_action( 'admin_action_wp_tesla_refresh_token', $n( 'maybe_refresh_token' ) );
 	add_action( 'admin_action_wp_tesla_sync_vehicles', $n( 'maybe_sync_vehicles' ) );
@@ -153,41 +152,14 @@ function display_settings_page() {
  * @return void
  */
 function display_login_form() {
-	$user = wp_get_current_user();
 
-	// Makes it easier for local testing.
-	$email    = defined( 'WP_TESLA_EMAIL' ) ? WP_TESLA_EMAIL : $user->user_email;
-	$password = defined( 'WP_TESLA_PASSWORD' ) ? WP_TESLA_PASSWORD : '';
+	$url = \WPTesla\API\get_login_form_url();
+	// $results = \WPTesla\API\authenticate_v3();
+
+	// echo wp_json_encode( $results, JSON_PRETTY_PRINT );
 
 	?>
-	<form method="post" id="wp-tesla-login-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-		<input type="hidden" name="wp_tesla_nonce" value="<?php echo esc_attr( wp_create_nonce( 'login' ) ); ?>" />
-		<input type="hidden" name="action" value="wp_tesla_login" />
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th>
-						<label for="tesla-user-email"><?php esc_html_e( 'Email Address', 'wp-tesla' ); ?></label>
-					</th>
-					<td>
-						<input type="text" name="email" id="tesla-user-email" value="<?php echo esc_attr( $email ); ?>" class="regular-text" placeholder="<?php esc_html_e( 'tesla@example.com', 'wp-tesla' ); ?>" />
-					</td>
-				</tr>
-				<tr>
-					<th>
-						<label for="tesla-user-password"><?php esc_html_e( 'Password', 'wp-tesla' ); ?></label>
-					</th>
-					<td>
-						<input type="password" name="password" id="tesla-user-password" value="<?php echo esc_attr( $password ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'Password', 'wp-tesla' ); ?>" />
-						<p class="description">
-							<?php esc_html_e( 'Your username and password are not stored anywhere on this site and are only sent directly to the Tesla login service.', 'wp-tesla' ); ?>
-						</p>
-						<?php submit_button( __( 'Login', 'wp-tesla' ) ); ?>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</form>
+		<a href="<?php echo esc_url( $url ); ?>">Login</a>
 	<?php
 }
 

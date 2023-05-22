@@ -19,6 +19,7 @@ define( 'WP_TESLA_VERSION', '0.1.1' );
 define( 'WP_TESLA_URL', trailingslashit( plugin_dir_url( __FILE__ ) ) );
 define( 'WP_TESLA_PATH', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'WP_TESLA_INC', WP_TESLA_PATH . 'includes/' );
+define( 'WP_TESLA_CACHE_GROUP', 'wp_tesla' );
 
 // Include files.
 $files = [
