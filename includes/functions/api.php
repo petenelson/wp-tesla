@@ -438,42 +438,6 @@ function get_client_secret() {
 }
 
 /**
- * Authenticates the user with the Tesla API.
- *
- * @param  string $email    The email address.
- * @param  string $password The password.
- * @param  int    $user_id  The WordPress user ID, defaults to the
- *                          current user ID.
- * @return array
- */
-function authenticate( $email, $password, $user_id = 0 ) {
-
-	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
-
-	$form_values = [
-		'grant_type'     => 'password',
-		'client_id'      => get_client_id(),
-		'client_secret'  => get_client_secret(),
-		'email'          => $email,
-		'password'       => $password,
-	];
-
-	$api_response = request(
-		'/oauth/token',
-		'POST',
-		[
-			'cache_response' => false,
-			'require_token'  => false,
-			'form'           => $form_values,
-		]
-	);
-
-	$results = process_token_response( $api_response, $user_id );
-
-	return apply_filters( 'wp_tesla_api_authenticate', $results );
-}
-
-/**
  * Gets the login form to display within the My Tesla Account page.
  *
  * @return string
@@ -531,19 +495,14 @@ function get_login_form_url() {
 }
 
 /**
- * Authenticates the user with the Tesla API (oauth2/v3/authorize).
+ * Authenticates the current user with the Tesla API (oauth2/v3/authorize).
  *
- * @param  string $email    The email address.
- * @param  string $password The password.
- * @param  int    $user_id  The WordPress user ID, defaults to the
- *                          current user ID.
+ * @param string $code The authorization code, generated via the login form.
  * @return array
  */
-function authenticate_v3() {
+function authenticate_v3( $code ) {
 
 	$user_id = get_current_user_id();
-
-	$code = '';
 
 	$code_verifier = get_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', true );
 
@@ -576,8 +535,6 @@ function authenticate_v3() {
 				'form'           => $form_values,
 			]
 		);
-
-		var_dump( $api_response );
 
 		$results = process_token_response( $api_response, $user_id );
 	}

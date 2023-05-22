@@ -39,3 +39,15 @@ function output_css_classes( $classes, $echo = true ) {
 		return $classes;
 	}
 }
+
+/**
+ * Callback filter for filter_var_array() to strip HTML tags.
+ *
+ * @return array
+ */
+function filter_strip_all_tags() {
+    return [
+        'filter'  => FILTER_CALLBACK,
+        'options' => '\wp_strip_all_tags',
+    ];
+}

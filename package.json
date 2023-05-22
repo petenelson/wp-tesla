@@ -91,5 +91,7 @@
 	"engines": {
 		"node": ">=8.11"
 	},
-	"dependencies": {}
+	"dependencies": {
+		"json-parse-even-better-errors": "^3.0.0"
+	}
 }
