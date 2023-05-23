@@ -9,6 +9,7 @@ README.md
 bin/
 assets/
 config/
+tmp/
 node_modules/
 vendor/
 composer.json
