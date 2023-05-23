@@ -4,16 +4,15 @@ jobs:
   build-and-test:
 
     docker:
-      # See https://circleci.com/docs/2.0/circleci-images/#php
-      - image: circleci/php:7.4.11-cli-buster-node
+    docker:
+      - image: cimg/php:8.0-node # alias for latest PHP 8.0.x release with Composer 2 and Node.js.
         environment:
           MYSQL_USER: root
-      - image: circleci/mysql:5.7.30
+          NODE_OPTIONS: --max-old-space-size=4096
+      - image: cimg/mysql:8.0.28
         command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --port=3306
-        ports:
-          - "3306:3306"
         environment:
-          MYSQL_USER: root
+          MYSQL_ROOT_PASSWORD: password
           MYSQL_HOST: "127.0.0.1"
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_DATABASE: wordpress_test
