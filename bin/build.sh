@@ -7,6 +7,7 @@ set -x
 set -euo pipefail
 
 composer install
+nvm use 16
 npm install
 npm run build
 
