@@ -451,14 +451,10 @@ function get_login_form_url() {
 	$user_id = get_current_user_id();
 
 	$code_verifier  = get_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', true );
-	$code_challenge = '';
 
 	if ( empty( $code_verifier ) ) {
 		$code_verifier  = wp_generate_password( 86, false );
-		$code_challenge = base64_encode( $code_verifier );
-
 		update_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', $code_verifier );
-		update_user_meta( $user_id, 'wp_tesla_oauth2_code_challenge', $code_challenge );
 	}
 
 	$url = apply_filters( 'wp_tesla_authorize_v3_base_url', 'https://auth.tesla.com/oauth2/v3/authorize' );
@@ -466,7 +462,7 @@ function get_login_form_url() {
 	$url = add_query_arg(
 		[
 			'client_id'             => 'ownerapi',
-			'code_challenge'        => rawurlencode( $code_challenge ),
+			'code_challenge'        => rawurlencode( base64_encode( $code_verifier ) ),
 			'code_challenge_method' => 'S256',
 			'redirect_uri'          => rawurlencode( 'https://auth.tesla.com/void/callback' ),
 			'response_type'         => 'code',
