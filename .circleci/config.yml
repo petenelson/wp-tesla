@@ -4,7 +4,6 @@ jobs:
   build-and-test:
 
     docker:
-    docker:
       - image: cimg/php:8.0-node # alias for latest PHP 8.0.x release with Composer 2 and Node.js.
         environment:
           MYSQL_USER: root
