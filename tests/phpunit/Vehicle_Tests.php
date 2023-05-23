@@ -13,7 +13,7 @@ class Vehicle_Tests extends \WP_UnitTestCase {
 	/**
 	 * Setup the unit test.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->admin = $this->factory->user->create_and_get( array( 'role' => 'administrator' ) );

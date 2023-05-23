@@ -4,6 +4,8 @@ release
 vendor
 .idea
 *.log
+tmp
+.phpunit.result.cache
 
 # Project Files
 dist
