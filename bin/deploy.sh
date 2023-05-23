@@ -8,6 +8,7 @@ set -euo pipefail
 
 ssh-keyscan -H petenelson.io >> ~/.ssh/known_hosts
 
+sudo apt update
 sudo apt install -y rsync
 
 ls -la
