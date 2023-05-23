@@ -586,16 +586,16 @@ function vehicleize_url( $url, $vehicle_id ) {
 }
 
 /**
- * Gets the charge state for a vehicle.
+ * Gets the complete data for a vehicle.
  *
  * @param  string  $vehicle_id The vehicle ID.
  * @param  integer $user_id    The user ID.
  * @return array
  */
-function charge_state( $vehicle_id, $user_id = 0 ) {
+function vehicle_data( $vehicle_id, $user_id = 0 ) {
 
 	$api_response = request(
-		vehicleize_url( '/api/1/vehicles/{{vehicle_id}}/data_request/charge_state', $vehicle_id ),
+		vehicleize_url( '/api/1/vehicles/{{vehicle_id}}/vehicle_data', $vehicle_id ),
 		'GET',
 		[
 			'user_id' => empty( $user_id ) ? get_current_user_id() : $user_id,
@@ -610,7 +610,7 @@ function charge_state( $vehicle_id, $user_id = 0 ) {
 		$response = $api_response['data'];
 	}
 
-	return apply_filters( 'wp_tesla_api_charge_state', $response, $vehicle_id, $user_id );
+	return apply_filters( 'wp_tesla_api_vehicle_data', $response, $vehicle_id, $user_id );
 }
 
 /**
