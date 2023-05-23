@@ -7,6 +7,7 @@ set -x
 set -euo pipefail
 
 composer install
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 nvm use 16
 npm install
 npm run build
