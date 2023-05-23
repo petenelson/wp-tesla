@@ -11,6 +11,8 @@ use \WPTesla\API;
 use \WPTesla\Helpers;
 use \WPTesla\Vehicle;
 
+use function \WPTesla\Helpers\filter_strip_all_tags;
+
 /**
  * Set up theme defaults and register supported WordPress features.
  *
@@ -22,10 +24,10 @@ function setup() {
 	};
 
 	add_action( 'admin_menu', $n( 'add_tesla_settings_menu' ) );
-	add_action( 'admin_post_wp_tesla_login', $n( 'maybe_login_user' ) );
 	add_action( 'admin_action_wp_tesla_logout', $n( 'maybe_logout_user' ) );
 	add_action( 'admin_action_wp_tesla_refresh_token', $n( 'maybe_refresh_token' ) );
 	add_action( 'admin_action_wp_tesla_sync_vehicles', $n( 'maybe_sync_vehicles' ) );
+	add_action( 'admin_action_wp_tesla_connect_to_account', $n( 'connect_to_account' ) );
 
 	// Custom actions.
 	add_action( 'wp_tesla_display_login_form', $n( 'display_login_form' ) );
@@ -51,7 +53,6 @@ function is_the_user_connected() {
  */
 function get_account_status( $user_id = null ) {
 
-	// TODO add a cap check to see if current user can access other accounts.
 	$results = [
 		'connected'       => false,
 		'token'           => false,
@@ -153,41 +154,35 @@ function display_settings_page() {
  * @return void
  */
 function display_login_form() {
-	$user = wp_get_current_user();
 
-	// Makes it easier for local testing.
-	$email    = defined( 'WP_TESLA_EMAIL' ) ? WP_TESLA_EMAIL : $user->user_email;
-	$password = defined( 'WP_TESLA_PASSWORD' ) ? WP_TESLA_PASSWORD : '';
+	$url = \WPTesla\API\get_login_form_url();
 
 	?>
-	<form method="post" id="wp-tesla-login-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-		<input type="hidden" name="wp_tesla_nonce" value="<?php echo esc_attr( wp_create_nonce( 'login' ) ); ?>" />
-		<input type="hidden" name="action" value="wp_tesla_login" />
-		<table class="form-table">
-			<tbody>
-				<tr>
-					<th>
-						<label for="tesla-user-email"><?php esc_html_e( 'Email Address', 'wp-tesla' ); ?></label>
-					</th>
-					<td>
-						<input type="text" name="email" id="tesla-user-email" value="<?php echo esc_attr( $email ); ?>" class="regular-text" placeholder="<?php esc_html_e( 'tesla@example.com', 'wp-tesla' ); ?>" />
-					</td>
-				</tr>
-				<tr>
-					<th>
-						<label for="tesla-user-password"><?php esc_html_e( 'Password', 'wp-tesla' ); ?></label>
-					</th>
-					<td>
-						<input type="password" name="password" id="tesla-user-password" value="<?php echo esc_attr( $password ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'Password', 'wp-tesla' ); ?>" />
-						<p class="description">
-							<?php esc_html_e( 'Your username and password are not stored anywhere on this site and are only sent directly to the Tesla login service.', 'wp-tesla' ); ?>
-						</p>
-						<?php submit_button( __( 'Login', 'wp-tesla' ) ); ?>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</form>
+
+		<form method="get" action="<?php echo esc_url( admin_url( 'admin.php' ) ); ?>">
+			<input type="hidden" name="action" value="wp_tesla_connect_to_account" />
+			<input type="hidden" name="wp_tesla_nonce" value="<?php echo esc_attr( wp_create_nonce( 'connect_to_account' ) ); ?>" />
+
+			<strong><?php esc_html_e( 'Logging in to your Tesla account and syncing vehicles into WordPress is a two-step process.', 'wp-tesla' ); ?></strong>
+
+			<ol>
+				<li>
+					<p>
+						<?php esc_html_e( 'First, you will need to login to your Tesla account. This opens a new window, and after entering your valid name and password, you will see a Page Not Found message. This is expected. Copy the URL of this page once you have logged in.', 'wp-tesla' ); ?>
+					</p>
+
+					<a href="<?php echo esc_url( $url ); ?>" target="_blank" class="button button-primary" id="wp-tesla-login-to-account"><?php esc_html_e( 'Login to your Tesla account', 'wp-tesla'); ?></a>
+				</li>
+				<li>
+					<p>
+						<?php esc_html_e( 'Paste the URL from the valid login into the field below. This will validate the access code and allow WordPress to connect the vehicles on your account.', 'wp-tesla'); ?>
+						<br/>
+						<input type="text" class="large-text" name="login_auth_url" id="wp-tesla-login-auth-url" />
+					</p>
+					<button class="button button-primary" disabled id="wp-tesla-connect-to-vehicles"><?php esc_html_e( 'Connect to my Tesla vehicles', 'wp-tesla'); ?></a>
+				</li>
+			</ol>
+		</form>
 	<?php
 }
 
@@ -210,6 +205,14 @@ function display_logged_in_template() {
 		[
 			'action'         => 'wp_tesla_refresh_token',
 			'wp_tesla_nonce' => rawurlencode( wp_create_nonce( 'refresh' ) ),
+		],
+		admin_url( 'admin.php' )
+	);
+
+	$sync_vehicles_url = add_query_arg(
+		[
+			'action'         => 'wp_tesla_sync_vehicles',
+			'wp_tesla_nonce' => rawurlencode( wp_create_nonce( 'sync_vehicles' ) ),
 		],
 		admin_url( 'admin.php' )
 	);
@@ -268,57 +271,11 @@ function display_logged_in_template() {
 		<?php esc_html_e( 'Refresh Token', 'wp-tesla' ); ?>
 	</a>
 
+	<a href="<?php echo esc_url( $sync_vehicles_url ); ?>" class="button">
+		<?php esc_html_e( 'Sync Vehicles', 'wp-tesla' ); ?>
+	</a>
+
 	<?php
-}
-
-/**
- * Admin action hook to login the user.
- *
- * @return void
- */
-function maybe_login_user() {
-
-	$post = filter_var_array(
-		$_POST, // phpcs:ignore
-		[
-			'wp_tesla_nonce' => FILTER_SANITIZE_STRING,
-			'email'          => FILTER_SANITIZE_EMAIL,
-			'password'       => FILTER_UNSAFE_RAW,
-		]
-	);
-
-	if ( wp_verify_nonce( $post['wp_tesla_nonce'], 'login' ) ) {
-
-		$results = \WPTesla\API\authenticate_v3(
-			trim( $post['email'] ),
-			trim( $post['password'] ),
-			get_current_user_id()
-		);
-
-		if ( $results['authenticated'] ) {
-
-			// Redirect to sync vehicles.
-			$url = add_query_arg(
-				[
-					'action'         => 'wp_tesla_sync_vehicles',
-					'wp_tesla_nonce' => rawurlencode( wp_create_nonce( 'sync_vehicles' ) ),
-				],
-				admin_url( 'admin.php' )
-			);
-		} else {
-			$url = add_query_arg(
-				[
-					'post_type' => rawurlencode( \WPTesla\PostTypes\Tesla\get_post_type_name() ),
-					'page'      => rawurlencode( get_settings_menu_slug() ),
-					'error'     => 'invalid-login',
-				],
-				admin_url( 'edit.php' )
-			);
-		}
-
-		wp_safe_redirect( $url );
-		exit;
-	}
 }
 
 /**
@@ -331,7 +288,7 @@ function maybe_logout_user() {
 	$get = filter_var_array(
 		$_GET,
 		[
-			'wp_tesla_nonce' => FILTER_SANITIZE_STRING,
+			'wp_tesla_nonce' => filter_strip_all_tags(),
 		]
 	);
 
@@ -341,15 +298,7 @@ function maybe_logout_user() {
 		logout();
 
 		// Redirect to the account/settings page.
-		$url = add_query_arg(
-			[
-				'post_type' => rawurlencode( \WPTesla\PostTypes\Tesla\get_post_type_name() ),
-				'page'      => rawurlencode( get_settings_menu_slug() ),
-			],
-			admin_url( 'edit.php' )
-		);
-
-		wp_safe_redirect( $url );
+		wp_safe_redirect( get_account_page_url() );
 		exit;
 	}
 }
@@ -364,7 +313,7 @@ function maybe_sync_vehicles() {
 	$get = filter_var_array(
 		$_GET,
 		[
-			'wp_tesla_nonce' => FILTER_SANITIZE_STRING,
+			'wp_tesla_nonce' => filter_strip_all_tags(),
 		]
 	);
 
@@ -401,7 +350,7 @@ function maybe_refresh_token() {
 	$get = filter_var_array(
 		$_GET,
 		[
-			'wp_tesla_nonce' => FILTER_SANITIZE_STRING,
+			'wp_tesla_nonce' => filter_strip_all_tags(),
 		]
 	);
 
@@ -454,4 +403,52 @@ function logout( $user_id = 0 ) {
 	API\revoke_token( $token );
 
 	do_action( 'wp_tesla_user_logged_out', $user_id );
+}
+
+/**
+ * Gets the URL for the account page.
+ *
+ * @return string
+ */
+function get_account_page_url() {
+	$url = add_query_arg(
+		[
+			'post_type' => rawurlencode( \WPTesla\PostTypes\Tesla\get_post_type_name() ),
+			'page'      => rawurlencode( get_settings_menu_slug() ),
+		],
+		admin_url( 'edit.php' )
+	);
+
+	return $url;
+}
+
+/**
+ * Parses the authorization URL code and connects to the Tesla account.
+ *
+ * @return void
+ */
+function connect_to_account() {
+
+	$get = filter_var_array(
+		$_GET,
+		[
+			'wp_tesla_nonce' => filter_strip_all_tags(),
+			'login_auth_url' => FILTER_SANITIZE_URL,
+		]
+	);
+
+	if ( wp_verify_nonce( $get['wp_tesla_nonce'], 'connect_to_account' ) && ! empty( $get['login_auth_url'] ) ) {
+
+		$url = wp_parse_url( $get['login_auth_url'] );
+
+		wp_parse_str( $url['query'], $params );
+
+		if ( isset( $params['code'] ) && ! empty( $params['code'] ) ) {
+			API\authenticate_v3( $params['code'] );
+		}
+	}
+
+	// Redirect to the account/settings page.
+	wp_safe_redirect( get_account_page_url() );
+	exit;
 }
