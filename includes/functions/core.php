@@ -77,6 +77,15 @@ function upgrade() {
 }
 
 /**
+ * Activate the plugin
+ *
+ * @return void
+ */
+function activate() {
+
+}
+
+/**
  * Deactivate the plugin
  *
  * Uninstall routines should be in uninstall.php
