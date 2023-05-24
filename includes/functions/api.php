@@ -450,23 +450,29 @@ function get_login_form_url() {
 
 	$user_id = get_current_user_id();
 
-	$code_verifier  = get_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', true );
+	$code_verifier = get_user_option( 'wp_tesla_oauth2_code_verifier' );
 
 	if ( empty( $code_verifier ) ) {
-		$code_verifier  = wp_generate_password( 86, false );
-		update_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', $code_verifier );
+		$code_verifier = wp_generate_password( 43, false );
+		update_user_option( $user_id, 'wp_tesla_oauth2_code_verifier', $code_verifier );
 	}
+
+	$code_challenge = hash( 'sha256', $code_verifier, true );
+	$code_challenge = rtrim( strtr( base64_encode( $code_challenge ), '+/', '-_' ), '=' );
+
+	$state = wp_generate_password( 12, false );
 
 	$url = apply_filters( 'wp_tesla_authorize_v3_base_url', 'https://auth.tesla.com/oauth2/v3/authorize' );
 
 	$url = add_query_arg(
 		[
 			'client_id'             => 'ownerapi',
-			'code_challenge'        => rawurlencode( base64_encode( $code_verifier ) ),
+			'code_challenge'        => rawurlencode( $code_challenge ),
 			'code_challenge_method' => 'S256',
 			'redirect_uri'          => rawurlencode( 'https://auth.tesla.com/void/callback' ),
 			'response_type'         => 'code',
 			'scope'                 => rawurlencode( 'openid email offline_access' ),
+			'state'                 => rawurlencode( $state ),
 		],
 		$url
 	);
@@ -500,7 +506,7 @@ function authenticate_v3( $code ) {
 
 	$user_id = get_current_user_id();
 
-	$code_verifier = get_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', true );
+	$code_verifier = get_user_option( 'wp_tesla_oauth2_code_verifier' );
 
 	$results = [
 		'authenticated'  => false,
