@@ -58,7 +58,15 @@ function request( $endpoint, $method = 'GET', $params = [], $args = [] ) {
 		$request_args['headers']['Content-type'] = 'application/x-www-form-urlencoded';
 	}
 
+	$headers = [];
+
+	if ( isset( $args['headers'] ) && is_array( $args['headers'] ) ) {
+		$headers = array_merge( $request_args['headers'], $args['headers'] );
+	}
+
 	$request_args = array_merge( $request_args, (array) $args );
+
+	$request_args['headers'] = $headers;
 
 	// Convert the data in the body item to JSON.
 	if ( ! empty( $params['body'] ) && is_array( $params['body'] ) ) {
@@ -340,6 +348,13 @@ function refresh_token( $user_id = 0 ) {
 			'cache_response' => false,
 			'require_token'  => false,
 			'form'           => $form_values,
+		],
+		[
+			'headers' => [
+				'User-Agent'         => '',
+				'x-tesla-user-agent' => '',
+				'X-Requested-With'   => 'com.teslamotors.tesla',
+			],
 		]
 	);
 
@@ -535,6 +550,13 @@ function authenticate_v3( $code ) {
 				'require_token'  => false,
 				'return'         => 'raw',
 				'form'           => $form_values,
+			],
+			[
+				'headers' => [
+					'User-Agent'         => '',
+					'x-tesla-user-agent' => '',
+					'X-Requested-With'   => 'com.teslamotors.tesla',
+				],
 			]
 		);
 
