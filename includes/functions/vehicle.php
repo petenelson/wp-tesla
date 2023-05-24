@@ -22,8 +22,8 @@ function setup() {
 		return __NAMESPACE__ . "\\$function";
 	};
 
-	// Cron handler for automatic syncing of the charge state.
-	add_action( 'wp_tesla_sync_vehicle_charge_state', $n( 'get_charge_state' ) );
+	// Cron handler for automatic syncing of the vehicle data.
+	add_action( 'wp_tesla_sync_vehicle_data', $n( 'get_vehicle_data' ) );
 }
 
 /**
@@ -122,21 +122,21 @@ function get_vehicle_id( $post_id ) {
 }
 
 /**
- * Gets the meta key for storing the charge state data.
+ * Gets the meta key for storing the complete vehicle data data.
  *
  * @return string
  */
-function get_charge_state_key() {
-	return apply_filters( 'wp_tesla_vehicle_charge_state_key', 'wp_tesla_vehicle_charge_state' );
+function get_vehicle_data_key() {
+	return apply_filters( 'wp_tesla_vehicle_data_key', 'wp_tesla_vehicle_data' );
 }
 
 /**
- * Gets the meta key for storing the charge state updated timestamp.
+ * Gets the meta key for storing the complete vehicle data updated timestamp.
  *
  * @return string
  */
-function get_charge_state_updated_key() {
-	return apply_filters( 'wp_tesla_vehicle_charge_state_updated_key', 'wp_tesla_vehicle_charge_state_updated' );
+function get_vehicle_data_updated_key() {
+	return apply_filters( 'wp_tesla_vehicle_data_updated_key', 'wp_tesla_vehicle_data_updated' );
 }
 
 /**
@@ -230,25 +230,25 @@ function sync_vehicle( $vehicle_id, $user_id, $vehicle_data ) {
 }
 
 /**
- * How often should a vehicle charge state be synced in seconds, defaults
- * to one hour.
+ * How often should the vehicle data be synced in seconds, defaults to
+ * one hour.
  *
  * @return int
  */
-function get_charge_sync_interval() {
-	return apply_filters( 'wp_tesla_charge_sync_interval', HOUR_IN_SECONDS * 1 );
+function get_vehicle_data_sync_interval() {
+	return apply_filters( 'wp_tesla_vehicle_data_sync_interval', HOUR_IN_SECONDS * 1 );
 }
 
 /**
- * Get the charge state data for a vehicle. Automatically syncs charge
- * state from the API to the post meta if-needed.
+ * Get all of the data for a vehicle. Automatically syncs data from the API
+ * to the post meta if-needed.
  *
  * @param  string $vehicle_id The vehicle ID.
  * @param  int    $user_id    The user ID.
  * @param  array  $args       Additional args.
  * @return array
  */
-function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
+function get_vehicle_data( $vehicle_id, $user_id = 0, $args = [] ) {
 
 	$args = wp_parse_args(
 		$args,
@@ -261,29 +261,29 @@ function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
 
 	$vehicle = get_existing_vehicle( $vehicle_id, $user_id );
 
-	$charge_data = false;
+	$vehicle_data = false;
 
 	if ( ! empty( $vehicle ) ) {
 
 		$now          = time();
-		$charge_data  = get_post_meta( $vehicle->ID, get_charge_state_key(), true );
-		$last_updated = absint( get_post_meta( $vehicle->ID, get_charge_state_updated_key(), true ) );
-		$needs_sync   = empty( $charge_data );
+		$vehicle_data = get_post_meta( $vehicle->ID, get_vehicle_data_key(), true );
+		$last_updated = absint( get_post_meta( $vehicle->ID, get_vehicle_data_updated_key(), true ) );
+		$needs_sync   = empty( $vehicle_data );
 
 		// Check the seconds since the last sync with the current time.
-		if ( ! $needs_sync && ( $now - $last_updated ) > get_charge_sync_interval() ) {
+		if ( ! $needs_sync && ( $now - $last_updated ) > get_vehicle_data_sync_interval() ) {
 			$needs_sync = true;
 		}
 
 		if ( $needs_sync ) {
-			sync_charge_state( $vehicle_id, $user_id );
-			$charge_data = get_post_meta( $vehicle->ID, get_charge_state_key(), true );
+			sync_vehicle_data( $vehicle_id, $user_id );
+			$vehicle_data = get_post_meta( $vehicle->ID, get_vehicle_data_key(), true );
 		}
 
-		if ( ! empty( $charge_data ) ) {
-			$charge_data = json_decode( $charge_data );
-			if ( is_object( $charge_data ) ) {
-				$charge_data = (array) $charge_data;
+		if ( ! empty( $vehicle_data ) ) {
+			$vehicle_data = json_decode( $vehicle_data, true );
+			if ( is_object( $vehicle_data ) ) {
+				$vehicle_data = (array) $vehicle_data;
 			}
 		}
 
@@ -292,10 +292,39 @@ function get_charge_state( $vehicle_id, $user_id = 0, $args = [] ) {
 
 	// Do we only want a single field?
 	if ( ! empty( $args['field'] ) ) {
-		$charge_data = is_array( $charge_data ) && isset( $charge_data[ $args['field'] ] ) ? $charge_data[ $args['field'] ] : false;
+		$vehicle_data = is_array( $vehicle_data ) && isset( $vehicle_data[ $args['field'] ] ) ? $vehicle_data[ $args['field'] ] : false;
 	}
 
-	return apply_filters( 'wp_tesla_vehicle_get_charge_state', $charge_data, $vehicle_id, $user_id );
+	return apply_filters( 'wp_tesla_get_vehicle_data', $vehicle_data, $vehicle_id, $user_id );
+}
+
+/**
+ * Get the charge state data for a vehicle. Automatically syncs charge
+ * state from the API to the post meta if-needed.
+ *
+ * @param  string $vehicle_id The vehicle ID.
+ * @param  int    $user_id    The user ID.
+ * @return array
+ */
+function get_charge_state( $vehicle_id, $user_id = 0 ) {
+
+	$charge_state = get_vehicle_data( $vehicle_id, $user_id, [ 'field' => 'charge_state' ] );
+	$charge_state = is_array( $charge_state ) ? $charge_state : [];
+
+	$charge_state = wp_parse_args(
+		$charge_state,
+		[
+			'battery_level'         => 0,
+			'battery_range'         => 0,
+			'usable_battery_level'  => 0,
+			'charging_state'        => '',
+			'est_battery_range'     => 0,
+			'charge_port_door_open' => false,
+			'time_to_full_charge'   => 0,
+		]
+	);
+
+	return apply_filters( 'wp_tesla_vehicle_get_charge_state', $charge_state, $vehicle_id, $user_id );
 }
 
 /**
@@ -327,17 +356,14 @@ function get_vin( $vehicle_id, $user_id = 0 ) {
  */
 function get_battery_level( $vehicle_id, $user_id = 0 ) {
 
-	$battery_level = get_charge_state( $vehicle_id, $user_id, [ 'field' => 'usable_battery_level' ] );
-
-	if ( false !== $battery_level ) {
-		$battery_level = absint( $battery_level );
-	}
+	$charge_state  = get_charge_state( $vehicle_id, $user_id );
+	$battery_level = absint( $charge_state['usable_battery_level'] );
 
 	return apply_filters( 'wp_tesla_vehicle_get_battery_level', $battery_level, $vehicle_id, $user_id );
 }
 
 /**
- * Get the battery level for a vehicle.
+ * Get the estimated battery range for a vehicle.
  *
  * @param  string $vehicle_id The vehicle ID.
  * @param  int    $user_id    The user ID.
@@ -345,13 +371,25 @@ function get_battery_level( $vehicle_id, $user_id = 0 ) {
  */
 function get_estimated_range( $vehicle_id, $user_id = 0 ) {
 
-	$est_battery_range = get_charge_state( $vehicle_id, $user_id, [ 'field' => 'est_battery_range' ] );
-
-	if ( false !== $est_battery_range ) {
-		$est_battery_range = floor( floatval( $est_battery_range ) );
-	}
+	$charge_state      = get_charge_state( $vehicle_id, $user_id );
+	$est_battery_range = floor( floatval( $charge_state['est_battery_range'] ) );
 
 	return apply_filters( 'wp_tesla_vehicle_get_estimated_range', $est_battery_range, $vehicle_id, $user_id );
+}
+
+/**
+ * Get the ideal battery range for a vehicle.
+ *
+ * @param  string $vehicle_id The vehicle ID.
+ * @param  int    $user_id    The user ID.
+ * @return float
+ */
+function get_ideal_range( $vehicle_id, $user_id = 0 ) {
+
+	$charge_state        = get_charge_state( $vehicle_id, $user_id );
+	$ideal_battery_range = floor( floatval( $charge_state['ideal_battery_range'] ) );
+
+	return apply_filters( 'wp_tesla_vehicle_get_ideal_range', $ideal_battery_range, $vehicle_id, $user_id );
 }
 
 /**
@@ -362,7 +400,7 @@ function get_estimated_range( $vehicle_id, $user_id = 0 ) {
  * @param  int    $user_id    The user ID.
  * @return void
  */
-function sync_charge_state( $vehicle_id, $user_id = 0 ) {
+function sync_vehicle_data( $vehicle_id, $user_id = 0 ) {
 
 	$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
@@ -371,11 +409,11 @@ function sync_charge_state( $vehicle_id, $user_id = 0 ) {
 	if ( ! empty( $vehicle ) ) {
 
 		if ( wakeup( $vehicle_id, $user_id ) ) {
-			$api_response = API\charge_state( $vehicle_id, $user_id );
+			$api_response = API\vehicle_data( $vehicle_id, $user_id );
 
 			if ( ! empty( $api_response ) && is_object( $api_response ) && isset( $api_response->response ) ) {
-				update_post_meta( $vehicle->ID, get_charge_state_key(), wp_json_encode( $api_response->response ) );
-				update_post_meta( $vehicle->ID, get_charge_state_updated_key(), time() );
+				update_post_meta( $vehicle->ID, get_vehicle_data_key(), wp_json_encode( $api_response->response, JSON_PRETTY_PRINT ) );
+				update_post_meta( $vehicle->ID, get_vehicle_data_updated_key(), time() );
 			}
 		}
 	}
@@ -492,7 +530,7 @@ function maybe_create_sync_crons( $vehicle_id, $user_id ) {
 	$args = [ $vehicle_id, absint( $user_id ) ];
 
 	$hooks = [
-		'wp_tesla_sync_vehicle_charge_state',
+		'wp_tesla_sync_vehicle_data',
 	];
 
 	foreach ( $hooks as $hook ) {

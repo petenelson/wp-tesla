@@ -450,16 +450,17 @@ function get_login_form_url() {
 
 	$user_id = get_current_user_id();
 
-	$code_verifier  = get_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', true );
-	$code_challenge = '';
+	$code_verifier = get_user_option( 'wp_tesla_oauth2_code_verifier' );
 
 	if ( empty( $code_verifier ) ) {
-		$code_verifier  = wp_generate_password( 86, false );
-		$code_challenge = base64_encode( $code_verifier );
-
-		update_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', $code_verifier );
-		update_user_meta( $user_id, 'wp_tesla_oauth2_code_challenge', $code_challenge );
+		$code_verifier = wp_generate_password( 43, false );
+		update_user_option( $user_id, 'wp_tesla_oauth2_code_verifier', $code_verifier );
 	}
+
+	$code_challenge = hash( 'sha256', $code_verifier, true );
+	$code_challenge = rtrim( strtr( base64_encode( $code_challenge ), '+/', '-_' ), '=' );
+
+	$state = wp_generate_password( 12, false );
 
 	$url = apply_filters( 'wp_tesla_authorize_v3_base_url', 'https://auth.tesla.com/oauth2/v3/authorize' );
 
@@ -471,6 +472,7 @@ function get_login_form_url() {
 			'redirect_uri'          => rawurlencode( 'https://auth.tesla.com/void/callback' ),
 			'response_type'         => 'code',
 			'scope'                 => rawurlencode( 'openid email offline_access' ),
+			'state'                 => rawurlencode( $state ),
 		],
 		$url
 	);
@@ -504,7 +506,7 @@ function authenticate_v3( $code ) {
 
 	$user_id = get_current_user_id();
 
-	$code_verifier = get_user_meta( $user_id, 'wp_tesla_oauth2_code_verifier', true );
+	$code_verifier = get_user_option( 'wp_tesla_oauth2_code_verifier' );
 
 	$results = [
 		'authenticated'  => false,
@@ -586,16 +588,16 @@ function vehicleize_url( $url, $vehicle_id ) {
 }
 
 /**
- * Gets the charge state for a vehicle.
+ * Gets the complete data for a vehicle.
  *
  * @param  string  $vehicle_id The vehicle ID.
  * @param  integer $user_id    The user ID.
  * @return array
  */
-function charge_state( $vehicle_id, $user_id = 0 ) {
+function vehicle_data( $vehicle_id, $user_id = 0 ) {
 
 	$api_response = request(
-		vehicleize_url( '/api/1/vehicles/{{vehicle_id}}/data_request/charge_state', $vehicle_id ),
+		vehicleize_url( '/api/1/vehicles/{{vehicle_id}}/vehicle_data', $vehicle_id ),
 		'GET',
 		[
 			'user_id' => empty( $user_id ) ? get_current_user_id() : $user_id,
@@ -610,7 +612,7 @@ function charge_state( $vehicle_id, $user_id = 0 ) {
 		$response = $api_response['data'];
 	}
 
-	return apply_filters( 'wp_tesla_api_charge_state', $response, $vehicle_id, $user_id );
+	return apply_filters( 'wp_tesla_api_vehicle_data', $response, $vehicle_id, $user_id );
 }
 
 /**

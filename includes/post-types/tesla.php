@@ -28,7 +28,7 @@ function setup() {
 	// TODO add row actions for sync, turn off quick edit.
 	add_action( 'wp_tesla_vehicle_do_custom_column_vehicle_id', $n( 'column_vehicle_id' ) );
 	add_action( 'wp_tesla_vehicle_do_custom_column_battery_level', $n( 'column_battery_level' ) );
-	add_action( 'wp_tesla_vehicle_do_custom_column_estimated_range', $n( 'column_estimated_range' ) );
+	add_action( 'wp_tesla_vehicle_do_custom_column_ideal_range', $n( 'column_ideal_range' ) );
 	add_action( 'wp_tesla_vehicle_do_custom_column_vin', $n( 'column_vin' ) );
 }
 
@@ -114,10 +114,10 @@ function register() {
 function get_custom_columns() {
 
 	$columns = [
-		'battery_level'   => __( 'Battery', 'wp-tesla' ),
-		'estimated_range' => __( 'Range', 'wp-tesla' ),
-		'vehicle_id'      => __( 'ID', 'wp-tesla' ),
-		'vin'             => __( 'VIN', 'wp-tesla' ),
+		'battery_level' => __( 'Battery', 'wp-tesla' ),
+		'ideal_range'   => __( 'Range', 'wp-tesla' ),
+		'vehicle_id'    => __( 'ID', 'wp-tesla' ),
+		'vin'           => __( 'VIN', 'wp-tesla' ),
 	];
 
 	return apply_filters( 'wp_tesla_vehicle_get_custom_columns', $columns );
@@ -194,8 +194,8 @@ function column_battery_level( $vehicle_id ) {
  * @param  string $vehicle_id The vehicle ID.
  * @return void
  */
-function column_estimated_range( $vehicle_id ) {
-	$est_range = Vehicle\get_estimated_range( $vehicle_id );
+function column_ideal_range( $vehicle_id ) {
+	$est_range = Vehicle\get_ideal_range( $vehicle_id );
 
 	if ( false !== $est_range ) {
 		// We'll look into km later.
